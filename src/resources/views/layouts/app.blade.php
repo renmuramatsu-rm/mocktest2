@@ -18,28 +18,24 @@
                 <a class="header__logo" href="/">
                     <img src="{{ asset('storage/coachtech.svg') }}" alt="coachtech" class="coachtech__img">
                 </a>
-                
                 <nav>
                     <ul class="header-nav">
-                        @if (Auth::check())
                         <li class="header-nav__item">
-                            <form method="POST" action="{{ route('logout') }}">
+                            <form>
                                 @csrf
-                                <button type="submit" class="header-nav__button-logout">ログアウト</button>
+                                <a href="{{ route('attendanceList') }}" class="header-nav__button-logout">勤怠</a>
                             </form>
                         </li>
-                        @else
                         <li class="header-nav__item">
-                            <a href="{{ route('login') }}" class="header-nav__button-login">ログイン</a>
+                            <a href="{{ route('attendanceList') }}" class="header-nav__button-login">勤怠一覧</a>
                         </li>
-                        @endif
                         <li class="header-nav__item">
-                            <a href="{{ route('mypage') }}" class=" header-nav__button-mypage">マイページ</a>
+                            <a href="" class=" header-nav__button-mypage">申請</a>
                         </li>
                         <li class=" header-nav__item">
-                            <form action="/sell" method="get">
+                            <form method="POST" action="/logout">
                                 @csrf
-                                <button class="header-nav__button-sell" type="submit">出品</button>
+                                <button class="header-nav__button-logout" type="submit">ログアウト</button>
                             </form>
                         </li>
                     </ul>

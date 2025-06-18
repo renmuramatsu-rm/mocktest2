@@ -1,0 +1,27 @@
+body {
+    background-color: whitesmoke;
+}
+
+.mocktest2 {
+    margin: 0 auto;
+    padding: 30px 15px;
+    max-width: 1540px;
+}
+
+.stamp {
+    margin: 0 auto;
+    width: 70%;
+    text-align: center;
+}
+
+.date{
+    font-weight: 400;
+    font-size: 40px;
+    padding-bottom: 30px;
+}
+
+.hour{
+    font-weight: 700;
+    font-size: 80px;
+    padding-bottom: 60px;
+}

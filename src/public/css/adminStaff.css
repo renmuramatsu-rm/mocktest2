@@ -1,0 +1,47 @@
+body {
+    background-color: whitesmoke;
+}
+
+.staff {
+    max-width: 1540px;
+    width: 100%;
+    padding: 30px 15px;
+    margin: 0 auto;
+}
+
+.staff_table {
+    background-color: white;
+    padding-bottom: 20px;
+    margin: 0 auto;
+}
+
+.staff_title {
+    width: 70%;
+    font-weight: 700;
+    font-size: 30px;
+    padding-bottom: 30px;
+    border-radius: 10px;
+    margin: 0 auto;
+}
+
+.staff_body {
+    width: 70%;
+    margin: 0 auto;
+    padding-bottom: 30px;
+    position: relative;
+}
+
+.staff_table th {
+    position: relative;
+    text-align: left;
+    padding-left: 10px;
+    width: 15%;
+    margin-right: 40px;
+}
+
+.staff_table th,
+.staff_table td {
+    border-top: 2px solid #E1E1E1;
+    border-bottom: 2px solid #E1E1E1;
+    padding: 10px;
+}
