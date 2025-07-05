@@ -23,14 +23,14 @@
                         <li class="header-nav__item">
                             <form>
                                 @csrf
-                                <a href="{{ route('attendanceList') }}" class="header-nav__button-logout">勤怠</a>
+                                <a href="/" class="header-nav__button-logout">勤怠</a>
                             </form>
                         </li>
                         <li class="header-nav__item">
                             <a href="{{ route('attendanceList') }}" class="header-nav__button-login">勤怠一覧</a>
                         </li>
                         <li class="header-nav__item">
-                            <a href="" class=" header-nav__button-mypage">申請</a>
+                            <a href="{{ route('requestList') }}" class=" header-nav__button-mypage">申請</a>
                         </li>
                         <li class=" header-nav__item">
                             <form method="POST" action="/logout">

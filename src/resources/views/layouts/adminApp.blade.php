@@ -30,7 +30,7 @@
                             <a href="{{ route('admin.staffList') }}" class="header-nav__button-login">スタッフ一覧</a>
                         </li>
                         <li class="header-nav__item">
-                            <a href="" class=" header-nav__button-mypage">申請一覧</a>
+                            <a href="{{ route('requestList') }}" class=" header-nav__button-mypage">申請一覧</a>
                         </li>
                         <li class=" header-nav__item">
                             <form method="POST" action="/admin/logout">

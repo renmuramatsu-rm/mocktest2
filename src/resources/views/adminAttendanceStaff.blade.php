@@ -38,45 +38,44 @@
             </tr>
         </thead>
         <tbody class="list_table-body">
-            @foreach($attendances as $attendance)
+            @foreach($month_day_lists as $month_day_list)
             <tr class="list_item">
                 <td class="list_item-content">
-                    @if($attendance->clockIn)
-                    {{ $attendance->clockIn->format('m/d') }}
+                    {{ $month_day_list['format_date'] }}
+                </td>
+                <td class="list_item-content">
+                    @if(isset($month_day_list['attendance']) && $month_day_list['attendance']->clockIn)
+                    {{ $month_day_list['attendance']->clockIn->format('H:i')}}
                     @else
                     {{ '' }}
                     @endif
                 </td>
                 <td class="list_item-content">
-                    @if($attendance->clockIn)
-                    {{ $attendance->clockIn->format('H:i') }}
+                    @if(isset($month_day_list['attendance']) && $month_day_list['attendance']->clockOut)
+                    {{ $month_day_list['attendance']->clockOut->format('H:i') }}
                     @else
                     {{ '' }}
                     @endif
                 </td>
                 <td class="list_item-content">
-                    @if($attendance->clockOut)
-                    {{ $attendance->clockOut->format('H:i') }}
-                    @else
-                    {{ '' }}
-                    @endif
-                </td>
-                <td class="list_item-content">
-                    @if($attendance->breakTime)
-                    {{ $attendance->breakTime }}時間
+                    @if(isset($month_day_list['attendance']) && $month_day_list['attendance']->total_restTime)
+                    {{ $month_day_list['attendance']->total_restTime }}時間
                     @else{{ ''}}
                     @endif
                 </td>
                 <td class="list_item-content">
-                    @if($attendance->workTime)
-                    {{ $attendance->workTime }}時間
+                    @if(isset($month_day_list['attendance']) && $month_day_list['attendance']->workTime)
+                    {{ $month_day_list['attendance']->workTime }}時間
                     @else{{ ''}}
                     @endif
                 </td>
                 <td class="list_item-content">
+                    @if(isset($month_day_list['attendance']) && $month_day_list['attendance']->id)
                     <a href="
-                    {{ route('detail',$attendance->id) }}">
+                    {{ route('detail',$month_day_list['attendance']->id) }}">
                         詳細</a>
+                    @else<p>詳細</p>
+                    @endif
                 </td>
             </tr>
             @endforeach

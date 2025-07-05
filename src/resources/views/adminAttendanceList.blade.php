@@ -38,17 +38,15 @@
             </tr>
         </thead>
         <tbody class="list_table-body">
-            @foreach($users as $user)
+            @foreach($attendances as $attendance)
             <tr class="list_item">
                 <td class="list_item-content">
-                    @if($user->name)
-                    {{ $user->name }}
+                    @if($attendance->user->name)
+                    {{ $attendance->user->name }}
                     @else
                     {{ '' }}
                     @endif
                 </td>
-                @endforeach
-                @foreach($attendances as $attendance)
                 <td class="list_item-content">
                     @if($attendance->clockIn)
                     {{ $attendance->clockIn->format('H:i') }}

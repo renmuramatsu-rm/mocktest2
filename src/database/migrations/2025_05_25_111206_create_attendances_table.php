@@ -15,14 +15,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('employee_id')->constrained('users');
             $table->string('status')->default('出勤前');
+            $table->date('workDate')->nullable();
             $table->dateTime('clockIn')->nullable();
             $table->dateTime('clockOut')->nullable();
-            $table->dateTime('breakIn')->nullable();
-            $table->dateTime('breakOut')->nullable();
-            $table->integer('breakTime')->nullable();
+            $table->integer('total_restTime')->nullable();
             $table->integer('workTime')->nullable();
             $table->string('remark')->nullable();
             $table->timestamps();
+            // CHECK(clockOut > clockIn)
         });
     }
 

@@ -36,7 +36,7 @@ class User extends Authenticatable
 
     public function attendances()
     {
-        return $this->hasMany(Attendance::class);
+        return $this->hasMany(Attendance::class, 'employee_id');
     }
 
     /**
@@ -54,5 +54,10 @@ class User extends Authenticatable
     public function admin_users()
     {
         return $this->belongsToMany(AdminUser::class, 'admin_users_users', 'user_id', 'admin_user_id');
+    }
+
+    public function attendanceCorrectionRequests()
+    {
+        return $this->hasMany(AttendanceCorrectionRequest::class, 'user_id');
     }
 }

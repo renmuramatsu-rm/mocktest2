@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\Attendance;
 use App\Models\AdminUser;
+use App\Models\User;
 
 class AdminLoginController extends Controller
 {
@@ -33,10 +34,7 @@ class AdminLoginController extends Controller
         if (empty($viewDay)) {
             $viewDay = Carbon::now()->format('Y-m-d');
             $users = AdminUser::find($adminUser)->users;
-            foreach ($users as $user) {
-                $user_id = $user->id;
-                $attendances = Attendance::where('employee_id', $user_id)->whereDate('clockIn', $viewDay)->get();
-            }
+            $attendances = Attendance::with('user')->whereDate('clockIn', $viewDay)->get();
             return view('adminAttendanceList', compact('users', 'attendances', 'viewDay'));
         } elseif (!empty($viewDay)) {
             $viewDayInput = new Carbon($request->input('viewDay'));
@@ -87,7 +85,7 @@ class AdminLoginController extends Controller
                 $user_id = $user->id;
                 $attendances = Attendance::where('employee_id', $user_id)->whereDate('clockIn', $tomorrowCount)->get();
             }
-            return view('adminAttendanceList', compact('users','attendances'));
+            return view('adminAttendanceList', compact('users', 'attendances'));
         } elseif (!empty($viewDay)) {
             $tomorrow = $viewDay->addDay(1);
             $tomorrowCount = $tomorrow->day;

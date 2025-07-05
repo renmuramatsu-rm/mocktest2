@@ -23,10 +23,18 @@
                 日付
             </th>
             <td class="detail_body-date_item">
+                @if($attendance->clockIn)
                 {{ $attendance->clockIn->format('Y年')}}
+                @else
+                {{ '' }}
+                @endif
             </td>
             <td class="detail_body-date_item">
+                @if($attendance->clockIn)
                 {{ $attendance->clockIn->format('m月d日')}}
+                @else
+                {{ '' }}
+                @endif
             </td>
         </tr>
         <tr class="detail_body">
@@ -34,10 +42,18 @@
                 出勤・退勤
             </th>
             <td class="detail_body-clock_item">
-                <input type="datetime" name="clockIn" placeholder="{{ $attendance->clockIn->format('H:i') }}">
+                @if($attendance->clockIn)
+                <input type="datetime" name="clockIn" value="{{ $attendance->clockIn->format('H:i') }}">
+                @else
+                <input type="datetime" name="requested_clockIn" value="{{ '' }}">
+                @endif
             </td>
             <td class="detail_body-clock_item">
-                <input type="datetime" name="clockIn" placeholder="{{ $attendance->clockOut->format('H:i') }}">
+                @if($attendance->clockOut)
+                <input type="datetime" name="clockOut" placeholder="{{ $attendance->clockOut->format('H:i') }}">
+                @else
+                <input type="datetime" name="requested_clockOut" value="{{ '' }}">
+                @endif
             </td>
         </tr>
         <tr class=" detail_body">
@@ -45,10 +61,18 @@
                 休憩
             </th>
             <td class="detail_body-break_item">
+                @if($attendance->breakIn)
                 <input type="datetime" name="breakIn" placeholder="{{ $attendance->breakIn->format('H:i') }}">
+                @else
+                <input type="datetime" name="breakIn" value="{{ '' }}">
+                @endif
             </td>
             <td class=" detail_body-break_item">
+                @if($attendance->breakOut)
                 <input type="datetime" name="breakOut" placeholder="{{ $attendance->breakOut->format('H:i') }}">
+                @else
+                <input type="datetime" name="breakOut" value="{{ '' }}">
+                @endif
             </td>
         </tr>
         <tr class=" detail_body">

@@ -9,16 +9,16 @@ class Attendance extends Model
     protected $fillable = [
         'employee_id',
         'status',
+        'workDate',
         'clockIn',
         'clockOut',
-        'breakIn',
-        'breakOut',
-        'breakTime',
+        'total_restTime',
         'workTime',
         'remark',
     ];
 
     protected $casts = [
+        'workDate' => 'date',
         'clockIn' => 'datetime',
         'clockOut' => 'datetime',
         'breakIn' => 'datetime',
@@ -28,5 +28,10 @@ class Attendance extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'employee_id');
+    }
+
+    public function rests()
+    {
+        return $this->hasMany(Rest::class, 'attendance_id');
     }
 }
