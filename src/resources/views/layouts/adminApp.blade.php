@@ -23,7 +23,7 @@
                         <li class="header-nav__item">
                             <form>
                                 @csrf
-                                <a href="" class="header-nav__button-logout">勤怠一覧</a>
+                                <a href="/admin/attendance/list" class="header-nav__button-logout">勤怠一覧</a>
                             </form>
                         </li>
                         <li class="header-nav__item">

@@ -8,9 +8,11 @@ class Rest extends Model
 {
 
     protected $fillable = [
+        'attendance_id',
         'restIn',
         'restOut',
         'restTime',
+        'workDate',
     ];
 
     protected $casts = [

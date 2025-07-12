@@ -5,9 +5,10 @@
 @endsection
 
 @section('content')
+
 @if($attendanceRequest && $attendanceRequest->status == 'pending')
 <div class="detail">
-    <form class="detail_form" action="{{ route('correctionRequest') }}" method="post">
+    <div class="detail_form">
         @csrf
         <div class="detail_title">
             勤怠詳細
@@ -42,29 +43,40 @@
                     {{ $attendanceRequest->requested_clockOut->format('H:i') }}
                 </td>
             </tr>
+            @foreach($requestRests as $requestRest)
             <tr class=" detail_body">
                 <th class=" detail_body-break_title">
                     休憩
                 </th>
                 <td class="detail_body-break_item">
-
+                    @if($requestRest->request_restIn)
+                    <p>{{ $requestRest->request_restIn->format('H:i') }}</p>
+                    @else
+                    <p>{{ '' }}</p>
+                    @endif
                 </td>
                 <td class=" detail_body-break_item">
+                    @if($requestRest->request_restOut)
+                    <p>{{ $requestRest->request_restOut->format('H:i') }}</p>
+                    @else
+                    <p>{{ '' }}</p>
+                    @endif
                 </td>
             </tr>
+            @endforeach
             <tr class="detail_body">
                 <th class=" detail_body-remark_title">
                     備考
                 </th>
                 <td class="detail_body-remark_item">
-                    <input type="textarea" name="remark" placeholder="">
+                    {{ $attendanceRequest->remark }}
                 </td>
             </tr>
         </table>
         <div class="detail_comment">
             <p class="detail_comment-item">*承認待ちのため修正はできません。</p>
         </div>
-    </form>
+    </div>
 </div>
 @else
 <div class="detail">
@@ -119,6 +131,11 @@
                     <input type="datetime" name="requested_clockOut" value="{{ '' }}">
                     @endif
                 </td>
+                <div class="form__error">
+                    @error('requested_clockIn')
+                    {{ $message }}
+                    @enderror
+                </div>
             </tr>
             @foreach($rests as $rest)
             <tr class=" detail_body">
@@ -127,16 +144,16 @@
                 </th>
                 <td class="detail_body-break_item">
                     @if($rest->restIn)
-                    <input type="datetime" name="restIn[]" value="{{ $rest->restIn->format('H:i') }}">
+                    <input type="datetime" name="request_restIn[]" value="{{ $rest->restIn->format('H:i') }}">
                     @else
-                    <input type="datetime" name="restIn[]" value="{{ '' }}">
+                    <input type="datetime" name="request_restIn[]" value="{{ '' }}">
                     @endif
                 </td>
                 <td class=" detail_body-break_item">
                     @if($rest->restOut)
-                    <input type="datetime" name="restOut[]" value="{{ $rest->restOut->format('H:i') }}">
+                    <input type="datetime" name="request_restOut[]" value="{{ $rest->restOut->format('H:i') }}">
                     @else
-                    <input type="datetime" name="restOut[]" value="{{ '' }}">
+                    <input type="datetime" name="request_restOut[]" value="{{ '' }}">
                     @endif
                 </td>
             </tr>
@@ -146,10 +163,10 @@
                     休憩２
                 </th>
                 <td class="detail_body-break_item">
-                    <input type="datetime" name="restIn">
+                    <input type="datetime" name="request_restIn[]">
                 </td>
                 <td class=" detail_body-break_item">
-                    <input type="datetime" name="restOut">
+                    <input type="datetime" name="request_restOut[]">
                 </td>
             </tr>
             <tr class="detail_body">
@@ -157,14 +174,21 @@
                     備考
                 </th>
                 <td class="detail_body-remark_item">
-                    <input type="textarea" name="remark" placeholder="">
+                    <input type="textarea" name="remark">
                 </td>
+                <div class="form__error">
+                    @error('remark')
+                    {{ $message }}
+                    @enderror
+                </div>
             </tr>
         </table>
-        <button class="detail_button" type="submit">
-            <input type="hidden" name="status" value="approved">
-            修正
-        </button>
+        <div class="button">
+            <button class="detail_button" type="submit">
+                修正
+            </button>
+        </div>
+    </form>
 </div>
 @endif
 

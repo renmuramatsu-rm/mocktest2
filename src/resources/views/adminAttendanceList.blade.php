@@ -7,7 +7,7 @@
 @section('content')
 <div class="list">
     <div class="list_title">
-        勤怠一覧
+        {{ \Carbon\Carbon::parse($viewDay)->format('Y年m月d日') }}の勤怠
     </div>
     <div class="list_select">
         <form action="{{ route('listYesterday') }}" method="get">
@@ -62,8 +62,8 @@
                     @endif
                 </td>
                 <td class="list_item-content">
-                    @if($attendance->breakTime)
-                    {{ $attendance->breakTime }}時間
+                    @if($attendance->total_restTime)
+                    {{ $attendance->total_restTime }}時間
                     @else{{ ''}}
                     @endif
                 </td>
@@ -75,7 +75,7 @@
                 </td>
                 <td class="list_item-content">
                     <a href="
-                    {{ route('admin.detail',$attendance->id) }}">
+                    {{ route('detail',$attendance->id) }}">
                         詳細</a>
                 </td>
             </tr>

@@ -41,4 +41,9 @@ class AttendanceCorrectionRequest extends Model
     {
         return $this->belongsTo(Attendance::class);
     }
+
+    public function requestRest()
+    {
+        return $this->hasMany(RequestRest::class);
+}
 }

@@ -1,0 +1,23 @@
+.register-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.register-message {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.register-button {
+    background: none;
+    border: none;
+    color: #007bff;
+    font-size: 13px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.register-button:hover {
+    color: #0056b3;
+}

@@ -1,61 +1,159 @@
 body {
-    background-color: whitesmoke;
+    background-color: #f3f3f5;
+    font-family: 'Helvetica Neue', sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 .detail {
-    max-width: 1540px;
+    max-width: 800px;
     width: 100%;
     padding: 30px 15px;
     margin: 0 auto;
 }
 
 .detail_title {
-    width: 70%;
     font-weight: 700;
-    font-size: 30px;
-    padding-bottom: 30px;
-    margin: 0 auto;
+    font-size: 22px;
+    padding-bottom: 20px;
+    margin: 0 auto 20px;
+    border-left: 5px solid black;
+    padding-left: 10px;
 }
+
 
 .detail_table {
-    width: 70%;
-    background-color: white;
-    padding-bottom: 20px;
-    margin: 0 auto;
-}
-
-.detail_body {
     width: 100%;
-    margin: 0 auto;
-    padding-bottom: 30px;
-}
-
-.detail_table th {
-    text-align: left;
-    width: 30%;
-    padding-left: 30px;
-}
-
-.detail_table td {
-    text-align: left;
-    width: 20%;
-    margin-right: 40px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    border-collapse: collapse;
 }
 
 .detail_table th,
 .detail_table td {
-    border-top: 2px solid #E1E1E1;
-    border-bottom: 2px solid #E1E1E1;
-    padding-bottom: 10px;
-    padding-top: 10px;
+    border-bottom: 1px solid #e1e1e1;
+    padding: 16px 12px;
+    font-size: 15px;
+    vertical-align: middle;
+}
+
+.detail_table th {
+    width: 30%;
+    background-color: #fafafa;
+    font-weight: bold;
+    text-align: left;
+}
+
+.time-range {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.time-range input[type="time"],
+.detail_table input[type="time"],
+.detail_table input[type="text"] {
+    width: 100px;
+    padding: 6px 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.detail_table textarea {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    resize: vertical;
+}
+
+.date-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-row div {
+    width: 50%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.detail_comment {
+    margin-top: 10px;
+}
+
+.detail_comment-item {
+    color: #ff0000a0;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    float: right;
+}
+
+.button {
+    margin-top: 20px;
+    text-align: right;
 }
 
 .detail_button {
     background-color: black;
     color: white;
-    border-radius: 5px;
-    width: 15%;
-    margin-top: 20px;
-    padding: 5px 0px;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s ease;
+}
 
+.detail_button:hover {
+    opacity: 0.9;
+}
+
+/* モバイル対応 */
+@media screen and (max-width: 768px) {
+    .detail {
+        padding: 20px 10px;
+    }
+
+    .detail_title {
+        font-size: 18px;
+        padding-left: 8px;
+    }
+
+    .detail_table th,
+    .detail_table td {
+        font-size: 13px;
+        padding: 12px 8px;
+    }
+
+    .time-range input[type="time"],
+    .detail_table input[type="time"],
+    .detail_table input[type="text"] {
+        width: 90px;
+        font-size: 13px;
+    }
+
+    .detail_button {
+        width: auto;
+        float: right;
+        margin-top: 15px;
+        padding: 8px 30px;
+        font-size: 14px;
+        }
+
+    .button {
+        text-align: center;
+    }
+
+    .date-row div {
+        font-size: 14px;
+    }
 }

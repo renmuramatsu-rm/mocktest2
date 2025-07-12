@@ -23,7 +23,7 @@ class AttendanceController extends Controller
         $today = Carbon::today();
         $attendance = Attendance::where('employee_id', $user_id)->whereDate('workDate', $today)->latest()->first();
         if (is_null($attendance)) {
-            $attendance = (object)['status' => '出勤前'];
+            $attendance = (object)['status' => '勤務外'];
         }
         return view('index', compact('date', 'hour', 'attendance'));
     }
@@ -85,7 +85,7 @@ class AttendanceController extends Controller
             $attendance->update([
                 'employee_id' => $user->id,
                 'clockOut' => Carbon::now()->toTimeString(),
-                'status' => $request->input('status', '退勤後'),
+                'status' => $request->input('status', '退勤済'),
                 'workTime' => $attendance->clockIn->diffInHours($now)
             ]);
             return view('index', compact('date', 'hour', 'attendance'));
@@ -93,7 +93,7 @@ class AttendanceController extends Controller
             $attendance = Attendance::Create([
                 'employee_id' => $user->id,
                 'clockOut' => Carbon::now(),
-                'status' => $request->input('status', '退勤後'),
+                'status' => $request->input('status', '退勤済'),
                 'workTime' => $attendance->clockIn->diffInHours($now)
             ]);
 
@@ -344,10 +344,21 @@ class AttendanceController extends Controller
 
     public function detail($id)
     {
-        $attendance = Attendance::with('user')->find($id);
-        $rests = Rest::where('attendance_id', $attendance->id)->whereDate('workDate', Carbon::today())->get();
-        $attendanceRequest = AttendanceCorrectionRequest::where('attendance_id', $attendance->id)->first();
-        return view('attendanceDetail', compact('attendance', 'rests', 'attendanceRequest'));
+        $user = Auth::user();
+        $adminUser = Auth::guard('admin')->user();
+        if ($adminUser) {
+            $attendance = Attendance::find($id);
+            $rests = Rest::where('attendance_id', $attendance->id)->whereDate('workDate', $attendance->workDate)->get();
+            return view('adminAttendanceDetail', compact('attendance', 'rests'));
+        }
+
+        if ($user) {
+            $attendance = Attendance::with('user')->find($id);
+            $rests = Rest::where('attendance_id', $attendance->id)->whereDate('workDate', $attendance->workDate)->get();
+            $attendanceRequest = AttendanceCorrectionRequest::with('requestRest')->where('attendance_id', $attendance->id)->first();
+            $requestRests = $attendanceRequest ? $attendanceRequest->requestRest : [];
+            return view('attendanceDetail', compact('attendance', 'rests', 'attendanceRequest', 'requestRests'));
+        }
     }
 
     public function edit($id, Request $request)
@@ -367,10 +378,10 @@ class AttendanceController extends Controller
             foreach ($restIns as $i => $restIn) {
                 if ($restIn || ($restOuts[$i] ?? null)) {
                     Rest::create([
-                        'attendance_id' => $attendance->id,
+                        'attendance_id' => $id,
                         'workDate' => Carbon::today(),
-                        'restIn' => $restIn ? Carbon::parse($restIn)->toTimeString() : null,
-                        'restOut' => $restOuts[$i] ? Carbon::parse($restOuts[$i])->toTimeString() : null,
+                        'restIn' => $restIn ? Carbon::parse($restIn) : null,
+                        'restOut' => $restOuts[$i] ? Carbon::parse($restOuts[$i]) : null,
                         'restTime' => isset($restIns[$i], $restOuts[$i])
                             ? Carbon::parse($restOuts[$i])->diffInMinutes(Carbon::parse($restIns[$i]))
                             : 0
@@ -378,23 +389,20 @@ class AttendanceController extends Controller
                 }
             }
         }
-        if ($request->clockIn) {
-            $attendance->update([
-                'clockIn' => Carbon::parse($request->clockIn)->toTimeString(),
-                'total_restTime' => Rest::where('attendance_id', $attendance->id)->sum('restTime'),
-            ]);
-        }
-        if ($request->clockOut) {
-            $attendance->update([
-                'clockOut' => Carbon::parse($request->clockOut)->toTimeString(),
-                'total_restTime' => Rest::where('attendance_id', $attendance->id)->sum('restTime'),
-                'workTime' => $attendance->clockIn->diffInHours($attendance->clockOut)
-            ]);
-        }
-        $attendance->total_restTime = Rest::where('attendance_id', $attendance->id)->sum('restTime');
-        $attendance->save();
-        return view('index', compact('date', 'hour', 'attendance'));
 
-        return view('index', compact('date', 'hour', 'attendance'));
+        $clockIn = $request->clockIn ? Carbon::parse($request->clockIn) : null;
+        $clockOut = $request->clockOut ? Carbon::parse($request->clockOut) : null;
+        if ($clockIn) {
+            $attendance->clockIn = $clockIn;
+        }
+        if ($clockOut) {
+            $attendance->clockOut = $clockOut;
+            if ($attendance->clockIn) {
+                $attendance->workTime = $attendance->clockIn->diffInHours($clockOut);
+            }
+            $attendance->total_restTime = Rest::where('attendance_id', $attendance->id)->sum('restTime');
+            $attendance->save();
+            return view('adminAttendanceDetail', compact('date', 'hour', 'attendance'));
+        }
     }
 }

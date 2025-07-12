@@ -5,23 +5,108 @@ body {
 .mocktest2 {
     margin: 0 auto;
     padding: 30px 15px;
-    max-width: 1540px;
+    text-align: center;
 }
 
 .stamp {
     margin: 0 auto;
     width: 70%;
-    text-align: center;
+}
+
+.status {
+    background-color: #d1d1d6;
+    color: #666;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    margin-bottom: 15px;
 }
 
 .date{
     font-weight: 400;
-    font-size: 40px;
-    padding-bottom: 30px;
+    font-size: 25px;
+    padding-bottom: 10px;
 }
 
 .hour{
     font-weight: 500;
     font-size: 60px;
     padding-bottom: 10px;
+}
+
+.button-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.work {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 30px;
+    margin: 5px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.work[name="status"][value="出勤前"] {
+    background-color: black;
+    color: white;
+}
+
+.work[name="status"][value="退勤済"] {
+    background-color: black;
+    color: white;
+}
+
+.work[name="status"][value="休憩中"] {
+    background-color: white;
+    color: black;
+}
+
+.work[name="status"][value="出勤中"] {
+    background-color: white;
+    color: black;
+}
+
+@media screen and (min-width: 1400px) and (max-width: 1540px) {
+    .mocktest2 {
+        width: 70%;
+    }
+
+    .stamp {
+        width: 60%;
+    }
+
+    .date {
+        font-size: 36px;
+    }
+
+    .hour {
+        font-size: 54px;
+    }
+}
+
+
+@media screen and (min-width: 768px) and (max-width: 850px) {
+    .mocktest2 {
+        width: 95%;
+        padding: 20px 10px;
+    }
+
+    .stamp {
+        width: 100%;
+    }
+
+    .date {
+        font-size: 28px;
+        padding-bottom: 20px;
+    }
+
+    .hour {
+        font-size: 36px;
+        padding-bottom: 8px;
+    }
 }

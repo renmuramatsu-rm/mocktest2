@@ -45,3 +45,40 @@ body {
     border-bottom: 2px solid #E1E1E1;
     padding: 10px;
 }
+
+@media screen and (min-width: 1400px) and (max-width: 1540px) {
+
+    .staff,
+    .staff_title,
+    .staff_body,
+    .staff_table {
+        width: 70%;
+    }
+}
+
+
+@media screen and (min-width: 768px) and (max-width: 850px) {
+
+    .staff,
+    .staff_title,
+    .staff_body,
+    .staff_table {
+        width: 95%;
+        padding: 0 10px;
+    }
+
+    .staff_title {
+        font-size: 24px;
+        text-align: center;
+    }
+
+    .staff_table th,
+    .staff_table td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .staff_table th {
+        width: 25%;
+    }
+}

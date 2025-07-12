@@ -77,3 +77,43 @@
         text-align: left;
     }
 }
+
+@media screen and (min-width: 1400px) and (max-width: 1540px) {
+    .register-form__content {
+        width: 60%;
+    }
+
+    .form {
+        width: 50%;
+    }
+
+    .form__button-submit {
+        font-size: 16px;
+    }
+}
+
+
+@media screen and (min-width: 768px) and (max-width: 850px) {
+    .register-form__content {
+        width: 90%;
+        padding: 20px 10px;
+    }
+
+    .form {
+        width: 100%;
+    }
+
+    .form__input--text input {
+        height: 38px;
+        font-size: 14px;
+    }
+
+    .form__button-submit {
+        height: 45px;
+        font-size: 15px;
+    }
+
+    .login__button-submit {
+        font-size: 14px;
+    }
+}

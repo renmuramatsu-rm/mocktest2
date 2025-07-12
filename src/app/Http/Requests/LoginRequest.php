@@ -4,8 +4,7 @@ namespace App\Http\Requests;
 
 use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
 
-//デフォルトのログイン機能には上述のFortifyLoginRequestクラスが引数として渡されているため、異なるクラスを呼び出すとエラーが出力される。
-//そのため、デフォルトにある上述のFortifyLoginRequestクラスを継承する必要がある
+// FortifyLoginRequestクラスを継承
 class LoginRequest extends FortifyLoginRequest
 {
     /**

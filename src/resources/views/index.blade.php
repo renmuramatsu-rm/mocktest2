@@ -27,23 +27,24 @@
             </script>
         </div>
         @if($attendance->status === '出勤中')
-        <form action="{{ route('clockOut') }}" method="POST">
-            @csrf
-            <button type="submit" class="work" name="status" value="退勤後">退勤</button>
-        </form>
-        <form action="{{ route('restIn') }}" method="POST">
-            @csrf
-            <button type="submit" class="work" name="status" value="休憩中">休憩入</button>
-        </form>
+        <div class="button-row">
+            <form action="{{ route('clockOut') }}" method="POST">
+                @csrf
+                <button type="submit" class="work" name="status" value="退勤済">退勤</button>
+            </form>
+            <form action="{{ route('restIn') }}" method="POST">
+                @csrf
+                <button type="submit" class="work" name="status" value="休憩中">休憩入</button>
+            </form>
+        </div>
         @elseif($attendance->status === '休憩中')
         <form action="{{ route('restOut') }}" method="POST">
             @csrf
             <button type="submit" class="work" name="status" value="出勤中">休憩戻</button>
         </form>
-        @elseif($attendance->status === '退勤後')
+        @elseif($attendance->status === '退勤済')
         <form action="{{ route('clockIn') }}" method="POST">
             @csrf
-            <input type="hidden" name="status" value="休憩中">
             <p>お疲れ様でした。</p>
         </form>
         @else

@@ -66,3 +66,59 @@ body {
     border-bottom: 2px solid #E1E1E1;
     padding: 10px;
 }
+
+@media screen and (min-width: 1400px) and (max-width: 1540px) {
+
+    .list,
+    .list_title,
+    .list_body,
+    .list_table {
+        width: 70%;
+    }
+
+    .request_list {
+        font-size: 16px;
+    }
+}
+
+
+@media screen and (min-width: 768px) and (max-width: 850px) {
+
+    .list,
+    .list_title,
+    .list_body,
+    .list_table {
+        width: 95%;
+        padding: 0 10px;
+    }
+
+    .list_title {
+        font-size: 24px;
+        text-align: center;
+    }
+
+    .request {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 0;
+    }
+
+    .list__item {
+        margin: 5px 0;
+    }
+
+    .request_list {
+        font-size: 14px;
+        margin-right: 10px;
+    }
+
+    .list_table th,
+    .list_table td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .list_table th {
+        width: auto;
+    }
+}

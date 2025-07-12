@@ -11,27 +11,32 @@ body {
 
 .list_select{
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
+    align-items: center;
     width: 70%;
     background-color: white;
-    margin: 0 auto;
+    margin: 0 auto 20px;
     margin-bottom: 20px;
-    padding: 5px 0px;
+    padding: 10px 20px;
+    font-size: 14px;
 }
 
 .list_table {
-    background-color: white;
-    padding-bottom: 20px;
+    width: 70%;
+    border-collapse: collapse;
     margin: 0 auto;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .list_title {
     width: 70%;
     font-weight: 700;
-    font-size: 30px;
+    font-size: 24px;
     padding-bottom: 30px;
     border-radius: 10px;
-    margin: 0 auto;
+    margin: 0 auto 20px;
 }
 
 .list_body {
@@ -42,16 +47,76 @@ body {
 }
 
 .list_table th {
-    position: relative;
-    text-align: left;
-    padding-left: 10px;
-    width: 15%;
-    margin-right: 40px;
+    text-align: center;
+    padding: 12px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+    border-bottom: 2px solid #e5e5e5;
 }
 
-.list_table th,
 .list_table td {
-    border-top: 2px solid #E1E1E1;
-    border-bottom: 2px solid #E1E1E1;
+    text-align: center;
     padding: 10px;
+    font-size: 14px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.list_item-content a {
+    color: #000;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.btn {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+
+@media screen and (min-width: 1400px) and (max-width: 1540px) {
+
+    .list,
+    .list_select,
+    .list_title,
+    .list_body,
+    .list_table {
+        width: 70%;
+    }
+}
+
+
+@media screen and (min-width: 768px) and (max-width: 850px) {
+
+    .list,
+    .list_title,
+    .list_body,
+    .list_table {
+        width: 95%;
+        padding: 0 10px;
+    }
+
+    .list_select {
+        flex-direction: column;
+        align-items: center;
+        width: 95%;
+        padding: 10px 0;
+    }
+
+    .list_title {
+        font-size: 24px;
+        text-align: center;
+    }
+
+    .list_table th,
+    .list_table td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .list_table th {
+        width: auto;
+    }
 }

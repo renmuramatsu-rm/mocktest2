@@ -5,10 +5,13 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AdminLoginController;
 use App\Http\Controllers\AdminAttendanceController;
 use App\Http\Controllers\AttendanceCorrectionRequestController;
+use App\Http\Controllers\ExportController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 
 // 一般ユーザー
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth', 'verified')->group(function () {
     Route::get('/',                                       [AttendanceController::class, 'index']);
     Route::post('/attendance/{attendance}/change-status', [AttendanceController::class, 'index'])->name('index');
     Route::get('/attendance/list',                        [AttendanceController::class, 'list'])->name('attendanceList');
@@ -31,15 +34,31 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('/admin/attendance/list',                 [AdminLoginController::class, 'adminAttendanceList'])->name('admin.attendanceList');
     Route::get('/admin/attendance/list/yesterday',       [AdminLoginController::class, 'listYesterday'])->name('listYesterday');
     Route::get('/admin/attendance/list/tomorrow',        [AdminLoginController::class, 'listTomorrow'])->name('listTomorrow');
-    Route::get('/admin/attendance/{id}',                 [AdminAttendanceController::class, 'adminDetail'])->name('admin.detail');
+    Route::post('/admin/attendance/{id}',                 [AdminAttendanceController::class, 'adminDetailEdit'])->name('admin.detailEdit');
     Route::get('/admin/staff/list',                      [AdminAttendanceController::class, 'staffList'])->name('admin.staffList');
     Route::get('/admin/attendance/staff/{id}',           [AdminAttendanceController::class, 'adminAttendanceStaff'])->name('admin.attendanceStaff');
     Route::get('/admin/attendance/staff/lastMonth/{id}', [AdminAttendanceController::class, 'staffLastMonth'])->name('admin.staffLastMonth');
     Route::get('/admin/attendance/staff/nextMonth/{id}', [AdminAttendanceController::class, 'staffNextMonth'])->name('admin.staffNextMonth');
+    Route::post('/admin/export/{id}', [ExportController::class, 'export'])->name('admin.export');
     Route::post('/stamp_correction_request/approve/{attendance_correct_request}', [AttendanceCorrectionRequestController::class, 'approve']);
 });
 
-Route::middleware(['web', 'auth:admin'])->group(function () {
+Route::middleware(['web'])->group(function () {
     Route::get('/attendance/{id}',               [AttendanceController::class, 'detail'])                      ->name('detail');
     Route::get('/stamp_correction_request/list', [AttendanceCorrectionRequestController::class, 'requestList'])->name('requestList');
+    Route::get('/stamp_correction_request/approve/{attendance_correct_request}', [AttendanceCorrectionRequestController::class, 'requestApprove'])->name('requestApprove');
+    Route::post('/stamp_correction_request/approve/{attendance_correct_request}', [AttendanceCorrectionRequestController::class, 'requestApproved'])->name('requestApproved');
 });
+
+// メール認証
+Route::get('/email/verify', function () {
+    return view('registerMail');
+})->middleware('auth')->name('verification.notice');
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+    return redirect('/');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');

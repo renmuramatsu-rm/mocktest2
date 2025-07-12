@@ -52,10 +52,8 @@
                     @endif
                 </td>
                 <td class="list_item-content">
-                </td>
-                <td class="list_item-content">
-                    @if($request->remark)
-                    {{ $request->remark }}
+                    @if($request->attendance->workDate)
+                    {{ $request->attendance->workDate->format('Y/m/d') }}
                     @else
                     {{ '' }}
                     @endif
@@ -68,6 +66,15 @@
                     @endif
                 </td>
                 <td class="list_item-content">
+                    @if($request->created_at)
+                    {{ $request->created_at->format('Y/m/d') }}
+                    @else
+                    {{ '' }}
+                    @endif
+                </td>
+                <td class="list_item-content">
+                    <a href="
+                {{ route('detail',$request->attendance->id) }}">詳細</a>
                 </td>
             </tr>
             @endforeach
