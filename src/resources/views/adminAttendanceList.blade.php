@@ -15,7 +15,7 @@
             <input class="btn" type="submit" value="前日">
         </form>
         <div>
-            <form action="{{ route('admin.login') }}" method="get">
+            <form action="{{ route('admin.attendanceList') }}" method="get">
                 <input type="date" name="viewDay" value="{{ $viewDay }}">
                 <input type="submit" value="表示">
             </form>
@@ -38,11 +38,12 @@
             </tr>
         </thead>
         <tbody class="list_table-body">
-            @foreach($attendances as $attendance)
+            @foreach($users as $user)
+            @foreach ($attendances[$user->id] as $attendance)
             <tr class="list_item">
                 <td class="list_item-content">
-                    @if($attendance->user->name)
-                    {{ $attendance->user->name }}
+                    @if($user->name)
+                    {{ $user->name }}
                     @else
                     {{ '' }}
                     @endif
@@ -79,6 +80,7 @@
                         詳細</a>
                 </td>
             </tr>
+            @endforeach
             @endforeach
         </tbody>
     </table>

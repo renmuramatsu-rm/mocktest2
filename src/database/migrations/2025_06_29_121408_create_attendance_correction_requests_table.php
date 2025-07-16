@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('attendance_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->date('workDate')->nullable();
             $table->time('requested_clockIn')->nullable();
             $table->time('requested_clockOut')->nullable();
             $table->string('remark')->nullable();
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('attendance_correct_requests');
+        Schema::dropIfExists('attendance_correction_requests');
     }
 };

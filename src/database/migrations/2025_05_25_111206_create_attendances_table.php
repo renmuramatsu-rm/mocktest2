@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('employee_id')->constrained('users');
             $table->string('status')->default('出勤前');
             $table->date('workDate')->nullable();
-            $table->dateTime('clockIn')->nullable();
-            $table->dateTime('clockOut')->nullable();
+            $table->time('clockIn')->nullable();
+            $table->Time('clockOut')->nullable();
             $table->integer('total_restTime')->nullable();
             $table->integer('workTime')->nullable();
             $table->string('remark')->nullable();

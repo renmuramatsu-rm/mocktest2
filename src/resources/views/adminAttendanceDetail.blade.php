@@ -25,8 +25,8 @@
                     日付
                 </th>
                 <td class="detail_body-date_item">
-                    @if($attendance->clockIn)
-                    {{ $attendance->clockIn->format('Y年')}}
+                    @if($attendance->workDate)
+                    {{ $attendance->workDate->format('Y年')}}
                     @else
                     {{ '' }}
                     @endif
@@ -34,8 +34,8 @@
                 <td>
                 </td>
                 <td class="detail_body-date_item">
-                    @if($attendance->clockIn)
-                    {{ $attendance->clockIn->format('m月d日')}}
+                    @if($attendance->workDate)
+                    {{ $attendance->workDate->format('m月d日')}}
                     @else
                     {{ '' }}
                     @endif
@@ -57,7 +57,7 @@
                 </td>
                 <td class="detail_body-clock_item">
                     @if($attendance->clockOut)
-                    <input type="datetime" name="clockOut" placeholder="{{ $attendance->clockOut->format('H:i') }}">
+                    <input type="datetime" name="clockOut" value="{{ $attendance->clockOut->format('H:i') }}">
                     @else
                     <input type="datetime" name="requested_clockOut" value="{{ '' }}">
                     @endif

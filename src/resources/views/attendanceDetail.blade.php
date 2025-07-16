@@ -19,6 +19,7 @@
                     名前
                 </th>
                 <td class="detail_body-name_item">
+                    {{ $attendanceRequest->user->name }}
                 </td>
             </tr>
             <tr class="detail_body">
@@ -26,10 +27,10 @@
                     日付
                 </th>
                 <td class="detail_body-date_item">
-                    {{ $attendanceRequest->requested_clockIn->format('Y年')}}
+                    {{ $attendanceRequest->workDate->format('Y年')}}
                 </td>
                 <td class="detail_body-date_item">
-                    {{ $attendanceRequest->requested_clockIn->format('m月d日')}}
+                    {{ $attendanceRequest->workDate->format('m月d日')}}
                 </td>
             </tr>
             <tr class="detail_body">
@@ -80,7 +81,7 @@
 </div>
 @else
 <div class="detail">
-    <form class="detail_form" action="{{ route('correctionRequest') }}" method="post">
+    <form class="detail_form" action="{{ route('edit', $attendance->id)}}" method="post">
         @csrf
         <div class="detail_title">
             勤怠詳細
@@ -99,15 +100,16 @@
                     日付
                 </th>
                 <td class="detail_body-date_item">
-                    @if($attendance->clockIn)
-                    {{ $attendance->clockIn->format('Y年')}}
+                    @if($attendance->workDate)
+                    {{ $attendance->workDate->format('Y年')}}
+                    <input type="hidden" name="workDate" value="{{ $attendance->workDate }}">
                     @else
                     {{ '' }}
                     @endif
                 </td>
                 <td class="detail_body-date_item">
-                    @if($attendance->clockIn)
-                    {{ $attendance->clockIn->format('m月d日')}}
+                    @if($attendance->workDate)
+                    {{ $attendance->workDate->format('m月d日')}}
                     @else
                     {{ '' }}
                     @endif

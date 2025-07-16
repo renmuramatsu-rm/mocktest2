@@ -16,17 +16,17 @@ class AttendanceCorrectionRequestController extends Controller
     {
         $user = Auth::user();
         $adminUser = Auth::guard('admin')->user();
-        // sessionを削除してからログイン処理を行う(パターンを網羅する)
+        if ($user){
+            $requests = AttendanceCorrectionRequest::with('attendance')
+                ->where('user_id', $user->id)
+                ->orderBy('created_at', 'desc')->get();
+        return view('attendanceCorrectionRequest', compact('requests'));
+        }
         if ($adminUser) {
             $requests = AttendanceCorrectionRequest::with('attendance')
                 ->orderBy('created_at', 'desc')->get();
             return view('adminAttendanceCorrectionRequest', compact('requests'));
         }
-        if ($user)
-            $requests = AttendanceCorrectionRequest::with('attendance')
-                ->where('user_id', $user->id)
-                ->orderBy('created_at', 'desc')->get();
-        return view('attendanceCorrectionRequest', compact('requests'));
     }
 
     public function correctionRequest(AttendanceRequest $request)
@@ -37,6 +37,7 @@ class AttendanceCorrectionRequestController extends Controller
             $attendanceRequest = AttendanceCorrectionRequest::create([
                 'attendance_id' => $attendance->id,
                 'user_id' => $user->id,
+                'workDate' => $request -> input('workDate'),
                 'requested_clockIn' => Carbon::parse($request->input('requested_clockIn')),
                 'requested_clockOut' => Carbon::parse($request->input('requested_clockOut')),
                 'remark' => $request->input('remark'),
@@ -46,16 +47,16 @@ class AttendanceCorrectionRequestController extends Controller
             $request_restOuts = $request->input('request_restOut', []);
             foreach ($request_restIns as $i => $request_restIn) {
                 if ($request_restIn || ($request_restOuts[$i] ?? null)) {
-                    $attendanceRequest->requestRest()->create([
+                    $attendanceRequest->requestRests()->create([
                         'request_restIn' => $request_restIn ? Carbon::parse($request_restIn) : null,
                         'request_restOut' => $request_restOuts[$i] ? Carbon::parse($request_restOuts[$i]) : null,
                     ]);
                 }
             }
-            $attendanceRequest->load('requestRest');
+            $attendanceRequest->load('requestRests');
             return view('attendanceDetail', [
                 'attendanceRequest' => $attendanceRequest,
-                'requestRests' => $attendanceRequest->requestRest,
+                'requestRests' => $attendanceRequest->requestRests,
             ]);
         }
     }
@@ -64,8 +65,11 @@ class AttendanceCorrectionRequestController extends Controller
     {
         $adminUser = Auth::guard('admin')->user();
         if ($adminUser) {
-            $attendanceRequest = AttendanceCorrectionRequest::where('id', $attendance_correct_request->id)->first();
-            return view('attendanceRequestApprove', compact('attendanceRequest'));
+            $attendanceRequest = AttendanceCorrectionRequest::with('requestRests','user')->where('id', $attendance_correct_request->id)->first();
+
+            $requestRests = $attendanceRequest ? $attendanceRequest->requestRests : [];
+
+            return view('attendanceRequestApprove', compact('attendanceRequest', 'requestRests'));
         }
     }
 
@@ -73,24 +77,59 @@ class AttendanceCorrectionRequestController extends Controller
     {
         $adminUser = Auth::guard('admin')->user();
         if ($adminUser) {
-            $attendance = $attendance_correct_request->attendance;
-            $attendance->update([
-                'clockIn' => $attendance_correct_request->requested_clockIn,
-                'clockOut' => $attendance_correct_request->requested_clockOut,
-            ]);
+        $attendance = $attendance_correct_request->attendance;
 
-            $requestedRests = $attendance_correct_request->requestRest;
-            $attendanceRests = $attendance->rests;
+        // 出退勤の更新
+        $attendance->update([
+            'clockIn' => $attendance_correct_request->requested_clockIn,
+            'clockOut' => $attendance_correct_request->requested_clockOut,
+        ]);
 
-            foreach ($attendanceRests as $i => $rest) {
-                if (isset($requestedRests[$i])) {
-                    $rest->update([
-                        'restIn' => $requestedRests[$i]->request_restIn,
-                        'restOut' => $requestedRests[$i]->request_restOut,
-                    ]);
-                }
+        // 休憩の更新（複数対応）
+        $requestedRests = $attendance_correct_request->requestRests;
+        $attendanceRests = $attendance->rests;
+        foreach ($requestedRests as $i => $requestedRest) {
+            if (isset($attendanceRests[$i])) {
+                // 既存の休憩を更新
+                $attendanceRests[$i]->update([
+                    'restIn' => $requestedRest->request_restIn,
+                    'restOut' => $requestedRest->request_restOut,
+                    'restTime' => ($requestedRest->request_restIn && $requestedRest->request_restOut)
+                        ? Carbon::parse($requestedRest->request_restOut)->diffInMinutes(Carbon::parse($requestedRest->request_restIn)) / 60
+                        : 0
+                ]);
+            } else {
+                // 足りない場合は追加
+                $attendance->rests()->create([
+                    'restIn' => $requestedRest->request_restIn,
+                    'restOut' => $requestedRest->request_restOut,
+                    'restTime' => ($requestedRest->request_restIn && $requestedRest->request_restOut)
+                        ? Carbon::parse($requestedRest->request_restOut)->diffInMinutes(Carbon::parse($requestedRest->request_restIn)) / 60
+                        : 0
+                ]);
             }
-            $attendance_correct_request->update(['status' => 'approved']);
+        }
+
+        // 余分な休憩レコードがある場合は削除
+        if (count($attendanceRests) > count($requestedRests)) {
+            for ($i = count($requestedRests); $i < count($attendanceRests); $i++) {
+                $attendanceRests[$i]->delete();
+            }
+        }
+
+        // 総休憩時間を更新
+        $attendance->total_restTime = $attendance->rests()->sum('restTime');
+
+        // 勤務時間再計算
+        if ($attendance->clockIn && $attendance->clockOut) {
+            $workMinutes = Carbon::parse($attendance->clockOut)->diffInMinutes(Carbon::parse($attendance->clockIn));
+            $attendance->workTime = ($workMinutes - ($attendance->total_restTime * 60)) / 60; // 時間単位
+        }
+
+        $attendance->save();
+
+        // ステータス変更
+        $attendance_correct_request->update(['status' => 'approved']);
 
             return redirect()->back();
         }

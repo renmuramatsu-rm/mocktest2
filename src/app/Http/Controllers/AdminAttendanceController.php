@@ -10,69 +10,44 @@ use App\Models\AdminUser;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use App\Models\Rest;
+use App\Http\Requests\AdminAttendanceRequest;
 
 class AdminAttendanceController extends Controller
 {
-    public function adminDetailEdit($id, Request $request)
+    public function adminDetailEdit($id, AdminAttendanceRequest $request)
     {
         $user = Auth::user();
-        $user_id = Auth::user()->id;
-        CarbonImmutable::setlocale('ja');
+        CarbonImmutable::setLocale('ja');
         $now = CarbonImmutable::now();
-        $date = $now->isoFormat('Y年M月D日(ddd)');
-        $hour = $now->isoFormat('HH:mm');
-        $today = Carbon::today();
-        $attendance = Attendance::find($id);
+        $attendance = Attendance::findOrFail($id); // 存在確認
 
+        // 出退勤・備考を更新
+        $attendance->update([
+            'clockIn' => Carbon::parse($request->input('clockIn')),
+            'clockOut' => Carbon::parse($request->input('clockOut')),
+            'remark' => $request->input('remark'),
+        ]);
+
+        // 既存の休憩データは一旦削除（必要に応じて更新処理に変更可）
+        $attendance->rests()->delete();
+
+        // 休憩の入力（複数）
         $restIns = $request->input('restIn', []);
         $restOuts = $request->input('restOut', []);
-        $existingRestsCount = Rest::where('attendance_id', $attendance->id)->count();
         foreach ($restIns as $i => $restIn) {
-            $restOut = $restOuts[$i] ?? null;
-            if (!empty($restIns) || !empty($restOuts)) {
-                foreach ($restIns as $i => $restIn) {
-                    if ($restIn || ($restOuts[$i] ?? null)) {
-                        Rest::create([
-                            'attendance_id' => $attendance->id,
-                            'workDate' => Carbon::today(),
-                            'restIn' => $restIn ? Carbon::parse($restIn) : null,
-                            'restOut' => $restOuts[$i] ? Carbon::parse($restOuts[$i]) : null,
-                            'restTime' => isset($restIns[$i], $restOuts[$i])
-                                ? Carbon::parse($restOuts[$i])->diffInMinutes(Carbon::parse($restIns[$i]))
-                                : 0
-                        ]);
-                    }
-                }
-            }
-            if ($i >= $existingRestsCount && ($restIn || $restOut)) {
-                Rest::create([
-                    'attendance_id' => $id,
-                    'workDate' => $attendance->workDate,
-                    'restIn' => $restIn ? Carbon::parse($restIn) : null,
-                    'restOut' => $restOut ? Carbon::parse($restOut) : null,
-                    'restTime' => ($restIn && $restOut)
-                        ? Carbon::parse($restOut)->diffInMinutes(Carbon::parse($restIn))
-                        : 0
+            if (!empty($restIn) || !empty($restOuts[$i] ?? null)) {
+                $attendance->rests()->create([
+                    'restIn' => !empty($restIn) ? Carbon::parse($restIn) : null,
+                    'restOut' => !empty($restOuts[$i]) ? Carbon::parse($restOuts[$i]) : null,
+                    'restTime' => (!empty($restIn) && !empty($restOuts[$i]))
+                        ? Carbon::parse($restOuts[$i])->diffInMinutes(Carbon::parse($restIn)) / 60
+                        : 0,
                 ]);
             }
         }
 
-        $clockIn = $request->clockIn ? Carbon::parse($request->clockIn) : null;
-        $clockOut = $request->clockOut ? Carbon::parse($request->clockOut) : null;
-        if ($clockIn) {
-            $attendance->clockIn = $clockIn;
-        }
-        if ($clockOut) {
-            $attendance->clockOut = $clockOut;
-            if ($attendance->clockIn) {
-                $attendance->workTime = $attendance->clockIn->diffInHours($clockOut);
-            }
-            $attendance->total_restTime = Rest::where('attendance_id', $attendance->id)->sum('restTime');
-            $attendance->save();
-            return redirect()->route('adminAttendanceDetail', [
-                'id' => $attendance->id
-            ])->with(compact('date', 'hour', 'attendance'));
-        }
+        return redirect()->route('detail', ['id' => $attendance->id])
+            ->with('success', '勤怠情報を更新しました。');
     }
 
 
@@ -112,7 +87,7 @@ class AdminAttendanceController extends Controller
                 $days = [];
                 $days['format_date'] = $month_day->format('m/d' . $day_of_week);
                 $days['target_date'] = $month_day->format('Y-m-d');
-                $days['attendance'] = Attendance::with('rests')->where('employee_id', $id)->whereDate('clockIn', $month_day)->first();
+                $days['attendance'] = Attendance::with('rests')->where('employee_id', $id)->whereDate('workDate', $month_day)->first();
                 $month_day_lists[] = $days;
             }
             return view('adminAttendanceStaff', compact('viewMonth', 'month_day_lists', 'user'));
@@ -139,7 +114,7 @@ class AdminAttendanceController extends Controller
                 $days = [];
                 $days['format_date'] = $month_day->format('m/d' . $day_of_week);
                 $days['target_date'] = $month_day->format('Y-m-d');
-                $days['attendance'] = Attendance::where('employee_id', $id)->whereDate('clockIn', $month_day)->first();
+                $days['attendance'] = Attendance::where('employee_id', $id)->whereDate('workDate', $month_day)->first();
                 $month_day_lists[] = $days;
             }
             return view('adminAttendanceStaff', compact('month_day_lists', 'viewMonth', 'user'));
@@ -173,7 +148,7 @@ class AdminAttendanceController extends Controller
                 $days = [];
                 $days['format_date'] = $month_day->format('m/d' . $day_of_week);
                 $days['target_date'] = $month_day->format('Y-m-d');
-                $days['attendance'] = Attendance::where('employee_id', $id)->whereDate('clockIn', $month_day)->first();
+                $days['attendance'] = Attendance::where('employee_id', $id)->whereDate('workDate', $month_day)->first();
                 $month_day_lists[] = $days;
             }
             return view('adminAttendanceStaff', compact('viewMonth', 'month_day_lists', 'user'));
@@ -199,7 +174,7 @@ class AdminAttendanceController extends Controller
                 $days = [];
                 $days['format_date'] = $month_day->format('m/d' . $day_of_week);
                 $days['target_date'] = $month_day->format('Y-m-d');
-                $days['attendance'] = Attendance::where('employee_id', $id)->whereDate('clockIn', $month_day)->first();
+                $days['attendance'] = Attendance::where('employee_id', $id)->whereDate('workDate', $month_day)->first();
                 $month_day_lists[] = $days;
             }
             return view('adminAttendanceStaff', compact('viewMonth', 'month_day_lists', 'user'));
@@ -232,7 +207,7 @@ class AdminAttendanceController extends Controller
                 $days = [];
                 $days['format_date'] = $month_day->format('m/d' . $day_of_week);
                 $days['target_date'] = $month_day->format('Y-m-d');
-                $days['attendance'] = Attendance::where('employee_id', $id)->whereDate('clockIn', $month_day)->first();
+                $days['attendance'] = Attendance::where('employee_id', $id)->whereDate('workDate', $month_day)->first();
                 $month_day_lists[] = $days;
             }
             return view('adminAttendanceStaff', compact('viewMonth', 'month_day_lists', 'user'));
@@ -258,7 +233,7 @@ class AdminAttendanceController extends Controller
                 $days = [];
                 $days['format_date'] = $month_day->format('m/d' . $day_of_week);
                 $days['target_date'] = $month_day->format('Y-m-d');
-                $days['attendance'] = Attendance::where('employee_id', $id)->whereDate('clockIn', $month_day)->first();
+                $days['attendance'] = Attendance::where('employee_id', $id)->whereDate('workDate', $month_day)->first();
                 $month_day_lists[] = $days;
             }
             return view('adminAttendanceStaff', compact('viewMonth', 'month_day_lists', 'user'));

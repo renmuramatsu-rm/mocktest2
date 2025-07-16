@@ -21,5 +21,13 @@ class AdminUserSeeder extends Seeder
         ];
         $adminUser = new AdminUser;
         $adminUser->fill($param)->save();
+
+        $param = [
+            'name' => 'admin2',
+            'email' => 'example2@test.com',
+            'password' => 'password',
+        ];
+        $adminUser = new AdminUser;
+        $adminUser->fill($param)->save();
     }
 }

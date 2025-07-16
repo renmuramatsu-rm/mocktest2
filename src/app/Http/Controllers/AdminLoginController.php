@@ -19,8 +19,15 @@ class AdminLoginController extends Controller
 
     public function admin_login(AdminLoginRequest $request)
     {
+        if (Auth::check()) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+
         $credentials = $request->only('email', 'password');
         if (Auth::guard('admin')->attempt($credentials)) {
+            $request->session()->regenerate();
             return redirect()->route('admin.attendanceList');
         }
     }
@@ -30,20 +37,20 @@ class AdminLoginController extends Controller
         $adminUser = Auth::guard('admin')->user()->id;
         $today = Carbon::now()->day;
         $today = Carbon::now()->format('Y-m-d');
-        $viewDate = $request->input('viewDay');
+        $viewDay = $request->input('viewDay');
         if (empty($viewDay)) {
             $viewDay = Carbon::now()->format('Y-m-d');
-            $users = AdminUser::find($adminUser)->users;
-            $attendances = Attendance::with('user')->whereDate('clockIn', $viewDay)->get();
+            $users = User::find($adminUser)->get();
+            $attendances = [];
+            foreach ($users as $user) {
+                $attendances[$user->id] = Attendance::where('employee_id', $user->id)->whereDate('workDate', $viewDay)->get();
+            }
             return view('adminAttendanceList', compact('users', 'attendances', 'viewDay'));
         } elseif (!empty($viewDay)) {
-            $viewDayInput = new Carbon($request->input('viewDay'));
-            $viewDay = $viewDayInput->format('Y-m-d');
-            $newDay = $viewDayInput->format('m');
-            $users = AdminUser::find($adminUser)->users;
+            $users = User::find($adminUser)->get();
+            $attendances = [];
             foreach ($users as $user) {
-                $user_id = $user->id;
-                $attendances = Attendance::where('employee_id', $user_id)->whereDate('clockIn', $viewDay)->get();
+                $attendances[$user->id] = Attendance::where('employee_id', $user->id)->whereDate('workDate', $viewDay)->get();
             }
             return view('adminAttendanceList', compact('users', 'attendances', 'viewDay'));
         }
@@ -54,20 +61,18 @@ class AdminLoginController extends Controller
         $viewDay = new Carbon($request->input('viewDay'));
         if (empty($viewDay)) {
             $yesterday = Carbon::now()->subDay(1);
-            $yesterdayCount = $yesterday->day;
-            $users = AdminUser::find($adminUser)->users;
+            $users = User::find($adminUser)->get();
+            $attendances = [];
             foreach ($users as $user) {
-                $user_id = $user->id;
-                $attendances = Attendance::where('employee_id', $user_id)->whereDate('clockIn', $yesterdayCount)->get();
+                $attendances[$user->id] = Attendance::where('employee_id', $user->id)->whereDate('workDate', $yesterday)->get();
             }
             return view('adminAttendanceList', compact('users', 'attendances'));
         } elseif (!empty($viewDay)) {
             $yesterday = $viewDay->subDay(1);
-            $yesterdayCount = $yesterday->day;
-            $users = AdminUser::find($adminUser)->users;
+            $users = User::find($adminUser)->get();
+            $attendances = [];
             foreach ($users as $user) {
-                $user_id = $user->id;
-                $attendances = Attendance::where('employee_id', $user_id)->whereDate('clockIn', $yesterdayCount)->get();
+                $attendances[$user->id] = Attendance::where('employee_id',$user->id)->whereDate('workDate', $yesterday)->get();
             }
             return view('adminAttendanceList', compact('users', 'attendances', 'viewDay'));
         }
@@ -79,20 +84,18 @@ class AdminLoginController extends Controller
         $viewDay = new Carbon($request->input('viewDay'));
         if (empty($viewDay)) {
             $tomorrow = Carbon::now()->addDay(1);
-            $tomorrowCount = $tomorrow->day;
-            $users = AdminUser::find($adminUser)->users;
+            $users = User::find($adminUser)->get();
+            $attendances = [];
             foreach ($users as $user) {
-                $user_id = $user->id;
-                $attendances = Attendance::where('employee_id', $user_id)->whereDate('clockIn', $tomorrowCount)->get();
+                $attendances[$user->id] = Attendance::where('employee_id', $user->id)->whereDate('workDate', $tomorrow)->get();
             }
             return view('adminAttendanceList', compact('users', 'attendances'));
         } elseif (!empty($viewDay)) {
             $tomorrow = $viewDay->addDay(1);
-            $tomorrowCount = $tomorrow->day;
-            $users = AdminUser::find($adminUser)->users;
+            $users = User::find($adminUser)->get();
+            $attendances = [];
             foreach ($users as $user) {
-                $user_id = $user->id;
-                $attendances = Attendance::where('employee_id', $user_id)->whereDate('clockIn', $tomorrowCount)->get();
+                $attendances[$user->id] = Attendance::where('employee_id', $user->id)->whereDate('workDate', $tomorrow)->get();
             }
             return view('adminAttendanceList', compact('users', 'attendances', 'viewDay'));
         }

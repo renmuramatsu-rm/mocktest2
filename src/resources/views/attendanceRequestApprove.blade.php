@@ -18,6 +18,7 @@
                     名前
                 </th>
                 <td class="detail_body-name_item">
+                    {{ $attendanceRequest->user->name}}
                 </td>
             </tr>
             <tr class="detail_body">
@@ -25,12 +26,12 @@
                     日付
                 </th>
                 <td class="detail_body-date_item">
-                    {{ $attendanceRequest->requested_clockIn->format('Y年')}}
+                    {{ $attendanceRequest->workDate->format('Y年')}}
                 </td>
                 <td>
                 </td>
                 <td class="detail_body-date_item">
-                    {{ $attendanceRequest->requested_clockIn->format('m月d日')}}
+                    {{ $attendanceRequest->workDate->format('m月d日')}}
                 </td>
             </tr>
             <tr class="detail_body">
@@ -47,19 +48,30 @@
                     {{ $attendanceRequest->requested_clockOut->format('H:i') }}
                 </td>
             </tr>
+            @foreach($requestRests as $requestRest)
             <tr class=" detail_body">
                 <th class=" detail_body-break_title">
                     休憩
                 </th>
                 <td class="detail_body-break_item">
-
+                    @if($requestRest->request_restIn)
+                    <p>{{ $requestRest->request_restIn->format('H:i') }}</p>
+                    @else
+                    <p>{{ '' }}</p>
+                    @endif
                 </td>
                 <td>
                     <p>~</p>
                 </td>
                 <td class=" detail_body-break_item">
+                    @if($requestRest->request_restOut)
+                    <p>{{ $requestRest->request_restOut->format('H:i') }}</p>
+                    @else
+                    <p>{{ '' }}</p>
+                    @endif
                 </td>
             </tr>
+            @endforeach
             <tr class="detail_body">
                 <th class=" detail_body-remark_title">
                     備考
@@ -87,6 +99,7 @@
                 名前
             </th>
             <td class="detail_body-name_item">
+                {{ $attendanceRequest->user->name}}
             </td>
         </tr>
         <tr class="detail_body">
@@ -94,12 +107,12 @@
                 日付
             </th>
             <td class="detail_body-date_item">
-                {{ $attendanceRequest->requested_clockIn->format('Y年')}}
+                {{ $attendanceRequest->workDate->format('Y年')}}
             </td>
             <td>
             </td>
             <td class="detail_body-date_item">
-                {{ $attendanceRequest->requested_clockIn->format('m月d日')}}
+                {{ $attendanceRequest->workDate->format('m月d日')}}
             </td>
         </tr>
         <tr class="detail_body">
@@ -116,19 +129,30 @@
                 {{ $attendanceRequest->requested_clockOut->format('H:i') }}
             </td>
         </tr>
+        @foreach($requestRests as $requestRest)
         <tr class=" detail_body">
             <th class=" detail_body-break_title">
                 休憩
             </th>
             <td class="detail_body-break_item">
-
+                @if($requestRest->request_restIn)
+                <p>{{ $requestRest->request_restIn->format('H:i') }}</p>
+                @else
+                <p>{{ '' }}</p>
+                @endif
             </td>
             <td>
                 <p>~</p>
             </td>
             <td class=" detail_body-break_item">
+                @if($requestRest->request_restOut)
+                <p>{{ $requestRest->request_restOut->format('H:i') }}</p>
+                @else
+                <p>{{ '' }}</p>
+                @endif
             </td>
         </tr>
+        @endforeach
         <tr class="detail_body">
             <th class=" detail_body-remark_title">
                 備考

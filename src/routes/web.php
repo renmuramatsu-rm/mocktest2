@@ -17,13 +17,11 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::get('/attendance/list',                        [AttendanceController::class, 'list'])->name('attendanceList');
     Route::get('/attendance/list/lastMonth',              [AttendanceController::class, 'listLastMonth'])->name('listLastMonth');
     Route::get('/attendance/list/nextMonth',              [AttendanceController::class, 'listNextMonth'])->name('listNextMonth');
-
     Route::post('/attendance/clock-in',                   [AttendanceController::class, 'clockIn'])->name('clockIn');
     Route::post('/attendance/clock-out',                  [AttendanceController::class, 'clockOut'])->name('clockOut');
     Route::post('/attendance/restIn',                     [AttendanceController::class, 'restIn'])->name('restIn');
     Route::post('/attendance/restOut',                    [AttendanceController::class, 'restOut'])->name('restOut');
     Route::post('/attendance/edit/{id}',                  [AttendanceController::class, 'edit'])->name('edit');
-    Route::post('/stamp_correction_request/list',         [AttendanceCorrectionRequestController::class, 'correctionRequest'])->name('correctionRequest');
 });
 
 // 管理者ユーザー

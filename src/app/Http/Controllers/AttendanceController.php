@@ -15,13 +15,12 @@ class AttendanceController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $user_id = Auth::user()->id;
         CarbonImmutable::setlocale('ja');
         $now = CarbonImmutable::now();
         $date = $now->isoFormat('Y年M月D日(ddd)');
         $hour = $now->isoFormat('HH:mm');
         $today = Carbon::today();
-        $attendance = Attendance::where('employee_id', $user_id)->whereDate('workDate', $today)->latest()->first();
+        $attendance = Attendance::where('employee_id', $user->id)->whereDate('workDate', $today)->latest()->first();
         if (is_null($attendance)) {
             $attendance = (object)['status' => '勤務外'];
         }
@@ -40,7 +39,6 @@ class AttendanceController extends Controller
         $newAttendanceDay = Carbon::today();
         if ($oldAttendance) {
             $oldAttendanceDay = (new Carbon($oldAttendance->clockIn))->copy()->startOfDay();
-            // 同日付の出勤打刻で、かつ直前の退勤打刻がされていないか日付を比較する。
             if (($oldAttendanceDay == $newAttendanceDay) && (empty($oldAttendance->clockOut))) {
                 return redirect()->back();
             }
@@ -79,7 +77,7 @@ class AttendanceController extends Controller
         $hour = $now->isoFormat('HH:mm');
         $today = Carbon::today();
         $attendance = Attendance::where('employee_id', $user->id)
-            ->whereDate('clockIn', Carbon::today())
+            ->whereDate('workDate', Carbon::today())
             ->first();
         if ($attendance && !$attendance->clockOut) {
             $attendance->update([
@@ -118,7 +116,7 @@ class AttendanceController extends Controller
         $hour = $now->isoFormat('HH:mm');
         $today = Carbon::today();
 
-        $attendance = Attendance::where('employee_id', $user->id)->whereDate('clockIn', Carbon::today())->first();
+        $attendance = Attendance::where('employee_id', $user->id)->whereDate('workDate', Carbon::today())->first();
         if ($attendance) {
             $attendance->update([
                 'employee_id' => $user->id,
@@ -144,7 +142,7 @@ class AttendanceController extends Controller
         $date = $now->isoFormat('Y年M月D日(ddd)');
         $hour = $now->isoFormat('HH:mm');
         $today = Carbon::today();
-        $attendance = Attendance::where('employee_id', $user->id)->whereDate('clockIn', Carbon::today())->first();
+        $attendance = Attendance::where('employee_id', $user->id)->whereDate('workDate', Carbon::today())->first();
         if ($attendance) {
             $rest = Rest::where('attendance_id', $attendance->id)->whereDate('workDate', Carbon::today())->orderBy('restIn', 'desc')->first();
             $rest->attendance_id = $attendance->id;
@@ -190,7 +188,7 @@ class AttendanceController extends Controller
                 $days = [];
                 $days['format_date'] = $month_day->format('m/d' . $day_of_week);
                 $days['target_date'] = $month_day->format('Y-m-d');
-                $days['attendance'] = Attendance::with('rests')->where('employee_id', $user_id)->whereDate('clockIn', $month_day)->first();
+                $days['attendance'] = Attendance::with('rests')->where('employee_id', $user_id)->whereDate('workDate', $month_day)->first();
                 $month_day_lists[] = $days;
             }
             return view('attendanceList', compact('viewMonth', 'month_day_lists'));
@@ -217,7 +215,7 @@ class AttendanceController extends Controller
                 $days = [];
                 $days['format_date'] = $month_day->format('m/d' . $day_of_week);
                 $days['target_date'] = $month_day->format('Y-m-d');
-                $days['attendance'] = Attendance::where('employee_id', $user_id)->whereDate('clockIn', $month_day)->first();
+                $days['attendance'] = Attendance::where('employee_id', $user_id)->whereDate('workDate', $month_day)->first();
                 $month_day_lists[] = $days;
             }
             return view('attendanceList', compact('month_day_lists', 'viewMonth'));
@@ -250,7 +248,7 @@ class AttendanceController extends Controller
                 $days = [];
                 $days['format_date'] = $month_day->format('m/d' . $day_of_week);
                 $days['target_date'] = $month_day->format('Y-m-d');
-                $days['attendance'] = Attendance::where('employee_id', $user_id)->whereDate('clockIn', $month_day)->first();
+                $days['attendance'] = Attendance::where('employee_id', $user_id)->whereDate('workDate', $month_day)->first();
                 $month_day_lists[] = $days;
             }
             return view('attendanceList', compact('viewMonth', 'month_day_lists'));
@@ -276,7 +274,7 @@ class AttendanceController extends Controller
                 $days = [];
                 $days['format_date'] = $month_day->format('m/d' . $day_of_week);
                 $days['target_date'] = $month_day->format('Y-m-d');
-                $days['attendance'] = Attendance::where('employee_id', $user_id)->whereDate('clockIn', $month_day)->first();
+                $days['attendance'] = Attendance::where('employee_id', $user_id)->whereDate('workDate', $month_day)->first();
                 $month_day_lists[] = $days;
             }
             return view('attendanceList', compact('viewMonth', 'month_day_lists'));
@@ -309,7 +307,7 @@ class AttendanceController extends Controller
                 $days = [];
                 $days['format_date'] = $month_day->format('m/d' . $day_of_week);
                 $days['target_date'] = $month_day->format('Y-m-d');
-                $days['attendance'] = Attendance::where('employee_id', $user_id)->whereDate('clockIn', $month_day)->first();
+                $days['attendance'] = Attendance::where('employee_id', $user_id)->whereDate('workDate', $month_day)->first();
                 $month_day_lists[] = $days;
             }
             return view('attendanceList', compact('viewMonth', 'month_day_lists'));
@@ -335,7 +333,7 @@ class AttendanceController extends Controller
                 $days = [];
                 $days['format_date'] = $month_day->format('m/d' . $day_of_week);
                 $days['target_date'] = $month_day->format('Y-m-d');
-                $days['attendance'] = Attendance::where('employee_id', $user_id)->whereDate('clockIn', $month_day)->first();
+                $days['attendance'] = Attendance::where('employee_id', $user_id)->whereDate('workDate', $month_day)->first();
                 $month_day_lists[] = $days;
             }
             return view('attendanceList', compact('viewMonth', 'month_day_lists'));
@@ -346,63 +344,52 @@ class AttendanceController extends Controller
     {
         $user = Auth::user();
         $adminUser = Auth::guard('admin')->user();
+
+        if ($user) {
+            $attendance = Attendance::with('rests','user')->where('id', $id)->first();
+            $rests = Rest::where('attendance_id', $attendance->id)->whereDate('workDate', $attendance->workDate)->get();
+            $attendanceRequest = AttendanceCorrectionRequest::with('requestRests')->where('attendance_id', $attendance->id)->first();
+            $requestRests = $attendanceRequest ? $attendanceRequest->requestRests : [];
+            return view('attendanceDetail', compact('attendance', 'rests', 'attendanceRequest', 'requestRests'));
+        }
         if ($adminUser) {
             $attendance = Attendance::find($id);
-            $rests = Rest::where('attendance_id', $attendance->id)->whereDate('workDate', $attendance->workDate)->get();
+            $rests = Rest::where('attendance_id', $attendance->id)->get();
             return view('adminAttendanceDetail', compact('attendance', 'rests'));
         }
 
-        if ($user) {
-            $attendance = Attendance::with('user')->find($id);
-            $rests = Rest::where('attendance_id', $attendance->id)->whereDate('workDate', $attendance->workDate)->get();
-            $attendanceRequest = AttendanceCorrectionRequest::with('requestRest')->where('attendance_id', $attendance->id)->first();
-            $requestRests = $attendanceRequest ? $attendanceRequest->requestRest : [];
-            return view('attendanceDetail', compact('attendance', 'rests', 'attendanceRequest', 'requestRests'));
-        }
     }
 
     public function edit($id, Request $request)
     {
         $user = Auth::user();
-        $user_id = Auth::user()->id;
-        CarbonImmutable::setlocale('ja');
-        $now = CarbonImmutable::now();
-        $date = $now->isoFormat('Y年M月D日(ddd)');
-        $hour = $now->isoFormat('HH:mm');
-        $today = Carbon::today();
-        $attendance = Attendance::find($id);
-
-        $restIns = $request->input('restIn', []);
-        $restOuts = $request->input('restOut', []);
-        if (!empty($restIns) || !empty($restOuts)) {
-            foreach ($restIns as $i => $restIn) {
-                if ($restIn || ($restOuts[$i] ?? null)) {
-                    Rest::create([
-                        'attendance_id' => $id,
-                        'workDate' => Carbon::today(),
-                        'restIn' => $restIn ? Carbon::parse($restIn) : null,
-                        'restOut' => $restOuts[$i] ? Carbon::parse($restOuts[$i]) : null,
-                        'restTime' => isset($restIns[$i], $restOuts[$i])
-                            ? Carbon::parse($restOuts[$i])->diffInMinutes(Carbon::parse($restIns[$i]))
-                            : 0
+        if ($user) {
+            $attendance = Attendance::where('id', $id)->first();
+            $attendanceRequest = AttendanceCorrectionRequest::create([
+                'attendance_id' => $attendance->id,
+                'user_id' => $user->id,
+                'workDate' => $request->input('workDate'),
+                'requested_clockIn' => Carbon::parse($request->input('requested_clockIn')),
+                'requested_clockOut' => Carbon::parse($request->input('requested_clockOut')),
+                'remark' => $request->input('remark'),
+                'status' => 'pending',
+            ]);
+            $request_restIns = $request->input('request_restIn', []);
+            $request_restOuts = $request->input('request_restOut', []);
+            foreach ($request_restIns as $i => $request_restIn) {
+                if ($request_restIn || ($request_restOuts[$i] ?? null)) {
+                    $attendanceRequest->requestRests()->create([
+                        'request_restIn' => $request_restIn ? Carbon::parse($request_restIn) : null,
+                        'request_restOut' => $request_restOuts[$i] ? Carbon::parse($request_restOuts[$i]) : null,
                     ]);
                 }
             }
-        }
-
-        $clockIn = $request->clockIn ? Carbon::parse($request->clockIn) : null;
-        $clockOut = $request->clockOut ? Carbon::parse($request->clockOut) : null;
-        if ($clockIn) {
-            $attendance->clockIn = $clockIn;
-        }
-        if ($clockOut) {
-            $attendance->clockOut = $clockOut;
-            if ($attendance->clockIn) {
-                $attendance->workTime = $attendance->clockIn->diffInHours($clockOut);
-            }
-            $attendance->total_restTime = Rest::where('attendance_id', $attendance->id)->sum('restTime');
-            $attendance->save();
-            return view('adminAttendanceDetail', compact('date', 'hour', 'attendance'));
+            $attendanceRequest->load('requestRests');
+            return view('attendanceDetail', [
+                'attendance' => $attendance,
+                'attendanceRequest' => $attendanceRequest,
+                'requestRests' => $attendanceRequest->requestRests,
+            ]);
         }
     }
 }

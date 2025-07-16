@@ -8,6 +8,7 @@ class RequestRest extends Model
 {
     protected $fillable = [
         'attendance_correction_request_id',
+        'workDate',
         'request_restIn',
         'request_restOut',
     ];

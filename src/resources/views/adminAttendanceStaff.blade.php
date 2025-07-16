@@ -11,7 +11,7 @@
     </div>
     <div class="list_select">
         <form action="{{ route('admin.staffLastMonth',$user->id) }}" method="get">
-            <input type="hidden" name="viewMonth" value="{{ $viewMonth ?? "" }}">
+            <input type="hidden" name="viewMonth" value="{{ $viewMonth ?? ""}}">
             <input class="btn" type="submit" value="前月">
         </form>
         <div>

@@ -12,6 +12,7 @@ class AttendanceCorrectionRequest extends Model
     protected $fillable = [
         'attendance_id',
         'user_id',
+        'workDate',
         'requested_clockIn',
         'requested_clockOut',
         'remark',
@@ -19,6 +20,7 @@ class AttendanceCorrectionRequest extends Model
     ];
 
     protected $casts = [
+        'workDate' => 'date',
         'requested_clockIn' => 'datetime',
         'requested_clockOut' => 'datetime',
     ];
@@ -42,7 +44,7 @@ class AttendanceCorrectionRequest extends Model
         return $this->belongsTo(Attendance::class);
     }
 
-    public function requestRest()
+    public function requestRests()
     {
         return $this->hasMany(RequestRest::class);
 }
