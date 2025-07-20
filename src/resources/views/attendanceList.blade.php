@@ -59,13 +59,13 @@
                 </td>
                 <td class="list_item-content">
                     @if(isset($month_day_list['attendance']) && $month_day_list['attendance']->total_restTime)
-                    {{ $month_day_list['attendance']->total_restTime }}時間
+                    {{ $month_day_list['attendance']->formatted_total_restTime }}
                     @else{{ ''}}
                     @endif
                 </td>
                 <td class="list_item-content">
                     @if(isset($month_day_list['attendance']) && $month_day_list['attendance']->workTime)
-                    {{ $month_day_list['attendance']->workTime }}時間
+                    {{ $month_day_list['attendance']->formatted_work_Time }}
                     @else{{ ''}}
                     @endif
                 </td>

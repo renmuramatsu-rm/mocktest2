@@ -16,8 +16,9 @@ class Rest extends Model
     ];
 
     protected $casts = [
-        'restIn' => 'datetime',
-        'restOut' => 'datetime',
+        'restIn'   => 'datetime',
+        'restOut'  => 'datetime',
+        'restTime' => 'float',
     ];
 
 

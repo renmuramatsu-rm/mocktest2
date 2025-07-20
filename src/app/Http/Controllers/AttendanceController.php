@@ -9,6 +9,7 @@ use Carbon\CarbonImmutable;
 use App\Models\Attendance;
 use App\Models\Rest;
 use App\Models\AttendanceCorrectionRequest;
+use App\Http\Requests\AttendanceRequest;
 
 class AttendanceController extends Controller
 {
@@ -92,7 +93,7 @@ class AttendanceController extends Controller
                 'employee_id' => $user->id,
                 'clockOut' => Carbon::now(),
                 'status' => $request->input('status', '退勤済'),
-                'workTime' => $attendance->clockIn->diffInHours($now)
+                'workTime' => $attendance->clockIn->diffInMinutes($now)
             ]);
 
             return view('index', compact('date', 'hour', 'attendance'));
@@ -147,7 +148,9 @@ class AttendanceController extends Controller
             $rest = Rest::where('attendance_id', $attendance->id)->whereDate('workDate', Carbon::today())->orderBy('restIn', 'desc')->first();
             $rest->attendance_id = $attendance->id;
             $rest->restOut = Carbon::now();
-            $rest->restTime = $rest->restIn->diffInHours($now);
+            if ($rest && $rest->restIn) {
+                $rest->restTime = $rest->restIn->diff($now)->format('%H:%M:%S');
+            }
             $rest->save();
             $attendance->update([
                 'employee_id' => $user->id,
@@ -346,7 +349,7 @@ class AttendanceController extends Controller
         $adminUser = Auth::guard('admin')->user();
 
         if ($user) {
-            $attendance = Attendance::with('rests','user')->where('id', $id)->first();
+            $attendance = Attendance::with('rests', 'user')->where('id', $id)->first();
             $rests = Rest::where('attendance_id', $attendance->id)->whereDate('workDate', $attendance->workDate)->get();
             $attendanceRequest = AttendanceCorrectionRequest::with('requestRests')->where('attendance_id', $attendance->id)->first();
             $requestRests = $attendanceRequest ? $attendanceRequest->requestRests : [];
@@ -357,10 +360,9 @@ class AttendanceController extends Controller
             $rests = Rest::where('attendance_id', $attendance->id)->get();
             return view('adminAttendanceDetail', compact('attendance', 'rests'));
         }
-
     }
 
-    public function edit($id, Request $request)
+    public function edit($id, AttendanceRequest $request)
     {
         $user = Auth::user();
         if ($user) {

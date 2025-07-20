@@ -1,74 +1,65 @@
 body {
-    background-color: #f3f3f5;
-    font-family: 'Helvetica Neue', sans-serif;
-    margin: 0;
-    padding: 0;
+    background-color: #f4f2f5;
+    font-family: sans-serif;
 }
 
 .detail {
-    max-width: 800px;
+    max-width: 760px;
     width: 100%;
     padding: 30px 15px;
     margin: 0 auto;
 }
 
 .detail_title {
-    font-weight: 700;
-    font-size: 22px;
+    font-weight: bold;
+    font-size: 28px;
     padding-bottom: 20px;
-    margin: 0 auto 20px;
     border-left: 5px solid black;
-    padding-left: 10px;
+    padding: 0 10px 15px;
 }
-
 
 .detail_table {
     width: 100%;
     background-color: white;
+    padding: 15px 0;
     border-radius: 12px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-    border-collapse: collapse;
 }
 
 .detail_table th,
 .detail_table td {
-    border-bottom: 1px solid #e1e1e1;
-    padding: 16px 12px;
-    font-size: 15px;
-    vertical-align: middle;
-}
-
-.detail_table th {
-    width: 30%;
-    background-color: #fafafa;
-    font-weight: bold;
-    text-align: left;
-}
-
-.time-range {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.time-range input[type="time"],
-.detail_table input[type="time"],
-.detail_table input[type="text"] {
-    width: 100px;
-    padding: 6px 10px;
+    border-top: 1px solid #D9D9D9;
+    border-bottom: 1px solid #D9D9D9;
+    padding: 15px;
     font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+    text-align: center;
+}
+
+.detail_table input[type="datetime"],
+.detail_table textarea {
+    width: 90px;
+    height: 34px;
+    border: 1px solid #D9D9D9;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 14px;
+    text-align: center;
 }
 
 .detail_table textarea {
-    width: 100%;
-    padding: 8px 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    resize: vertical;
+    width: 95%;
+    height: 60px;
+    resize: none;
+    margin: 0 auto;
+    display: block;
+    padding-left: 20px;
+    border-radius: 4px;
+    border: 1px solid #d9d9d9;
+}
+
+.detail_table input:focus,
+.detail_table textarea:focus {
+    outline: none;
+    border-color: #D9D9D9;
 }
 
 .date-row {
@@ -120,6 +111,7 @@ body {
 /* モバイル対応 */
 @media screen and (max-width: 768px) {
     .detail {
+        max-width: 95%;
         padding: 20px 10px;
     }
 
@@ -128,17 +120,25 @@ body {
         padding-left: 8px;
     }
 
+    detail_table {
+        padding: 15px 0;
+        width: 100%;
+        }
+
     .detail_table th,
     .detail_table td {
-        font-size: 13px;
-        padding: 12px 8px;
+        font-size: 12px;
+        padding: 10px;
     }
 
-    .time-range input[type="time"],
-    .detail_table input[type="time"],
-    .detail_table input[type="text"] {
-        width: 90px;
-        font-size: 13px;
+    .detail_table input[type="text"],
+    .detail_table input[type="time"] {
+        width: 60px;
+        font-size: 12px;
+    }
+    .detail_table textarea {
+        width: 100%;
+        font-size: 12px;
     }
 
     .detail_button {

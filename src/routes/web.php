@@ -38,7 +38,6 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('/admin/attendance/staff/lastMonth/{id}', [AdminAttendanceController::class, 'staffLastMonth'])->name('admin.staffLastMonth');
     Route::get('/admin/attendance/staff/nextMonth/{id}', [AdminAttendanceController::class, 'staffNextMonth'])->name('admin.staffNextMonth');
     Route::post('/admin/export/{id}', [ExportController::class, 'export'])->name('admin.export');
-    Route::post('/stamp_correction_request/approve/{attendance_correct_request}', [AttendanceCorrectionRequestController::class, 'approve']);
 });
 
 Route::middleware(['web'])->group(function () {

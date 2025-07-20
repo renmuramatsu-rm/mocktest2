@@ -18,5 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AttendanceSeeder::class);
         $this->call(RestSeeder::class);
         $this->call(AttendanceCorrectionRequestSeeder::class);
+        $this->call(RequestRestSeeder::class);
     }
 }

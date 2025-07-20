@@ -29,6 +29,8 @@
                 <td class="detail_body-date_item">
                     {{ $attendanceRequest->workDate->format('Y年')}}
                 </td>
+                <td>
+                </td>
                 <td class="detail_body-date_item">
                     {{ $attendanceRequest->workDate->format('m月d日')}}
                 </td>
@@ -39,6 +41,9 @@
                 </th>
                 <td class="detail_body-clock_item">
                     {{ $attendanceRequest->requested_clockIn->format('H:i') }}
+                </td>
+                <td class="center-mark">
+                    <p>~</p>
                 </td>
                 <td class="detail_body-clock_item">
                     {{ $attendanceRequest->requested_clockOut->format('H:i') }}
@@ -55,6 +60,9 @@
                     @else
                     <p>{{ '' }}</p>
                     @endif
+                </td>
+                <td class="center-mark">
+                    <p>~</p>
                 </td>
                 <td class=" detail_body-break_item">
                     @if($requestRest->request_restOut)
@@ -107,6 +115,8 @@
                     {{ '' }}
                     @endif
                 </td>
+                <td>
+                </td>
                 <td class="detail_body-date_item">
                     @if($attendance->workDate)
                     {{ $attendance->workDate->format('m月d日')}}
@@ -126,6 +136,9 @@
                     <input type="datetime" name="requested_clockIn" value="{{ '' }}">
                     @endif
                 </td>
+                <td class="center-mark">
+                    <p>~</p>
+                </td>
                 <td class="detail_body-clock_item">
                     @if($attendance->clockOut)
                     <input type="datetime" name="requested_clockOut" value="{{ $attendance->clockOut->format('H:i') }}">
@@ -133,11 +146,6 @@
                     <input type="datetime" name="requested_clockOut" value="{{ '' }}">
                     @endif
                 </td>
-                <div class="form__error">
-                    @error('requested_clockIn')
-                    {{ $message }}
-                    @enderror
-                </div>
             </tr>
             @foreach($rests as $rest)
             <tr class=" detail_body">
@@ -150,6 +158,9 @@
                     @else
                     <input type="datetime" name="request_restIn[]" value="{{ '' }}">
                     @endif
+                </td>
+                <td class="center-mark">
+                    <p>~</p>
                 </td>
                 <td class=" detail_body-break_item">
                     @if($rest->restOut)
@@ -167,6 +178,9 @@
                 <td class="detail_body-break_item">
                     <input type="datetime" name="request_restIn[]">
                 </td>
+                <td class="center-mark">
+                    <p>~</p>
+                </td>
                 <td class=" detail_body-break_item">
                     <input type="datetime" name="request_restOut[]">
                 </td>
@@ -175,16 +189,23 @@
                 <th class=" detail_body-remark_title">
                     備考
                 </th>
-                <td class="detail_body-remark_item">
-                    <input type="textarea" name="remark">
+                <td class="detail_body-remark_item" colspan="3">
+                    <textarea name="remark"></textarea>
                 </td>
-                <div class="form__error">
-                    @error('remark')
-                    {{ $message }}
-                    @enderror
-                </div>
             </tr>
         </table>
+
+        @error('requested_clockIn')
+        <div class="form__error">
+            {{ $message }}
+        </div>
+        @enderror
+        @error('remark')
+        <div class="form__error">
+            {{ $message }}
+        </div>
+        @enderror
+
         <div class="button">
             <button class="detail_button" type="submit">
                 修正

@@ -22,8 +22,8 @@ class AdminAttendanceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'clockIn' => ['date_format:H:i', 'before:requested_clockOut'],
-            'clockOut' => ['date_format:H:i'],
+            'clockIn' => ['required','date_format:H:i', 'before:clockOut'],
+            'clockOut' => ['required','date_format:H:i'],
             'remark' => ['required'],
         ];
     }

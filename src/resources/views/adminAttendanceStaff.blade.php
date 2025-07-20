@@ -24,6 +24,7 @@
             <form action="{{ route('admin.staffNextMonth', $user->id)}}" method="get">
                 <input type="hidden" name="viewMonth" value="{{ $viewMonth ?? "" }}">
                 <input class="btn" type="submit" value="翌月">
+            </form>
         </div>
     </div>
     <table class="list_table">
@@ -59,13 +60,13 @@
                 </td>
                 <td class="list_item-content">
                     @if(isset($month_day_list['attendance']) && $month_day_list['attendance']->total_restTime)
-                    {{ $month_day_list['attendance']->total_restTime }}時間
+                    {{ $month_day_list['attendance']->formatted_total_restTime }}
                     @else{{ ''}}
                     @endif
                 </td>
                 <td class="list_item-content">
                     @if(isset($month_day_list['attendance']) && $month_day_list['attendance']->workTime)
-                    {{ $month_day_list['attendance']->workTime }}時間
+                    {{ $month_day_list['attendance']->formatted_workTime }}
                     @else{{ ''}}
                     @endif
                 </td>
@@ -81,8 +82,13 @@
             @endforeach
         </tbody>
     </table>
+    <div class="csv">
+        <form action="{{ route('admin.export', $user->id) }}" method="post">
+            @csrf
+            <button class="detail_csv" type="submit">CSV出力</button>
+            <input type="hidden" name="viewMonth" value="{{ $viewMonth ?? ""}}">
+        </form>
+    </div>
 </div>
-
-
 
 @endsection

@@ -55,3 +55,19 @@ body {
     border-bottom: 2px solid #E1E1E1;
     padding: 10px;
 }
+.csv {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.detail_csv{
+    background-color: black;
+    color: white;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s ease;
+    margin-bottom: 40px;
+}

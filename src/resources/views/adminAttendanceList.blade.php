@@ -64,13 +64,13 @@
                 </td>
                 <td class="list_item-content">
                     @if($attendance->total_restTime)
-                    {{ $attendance->total_restTime }}時間
+                    {{ $attendance->formatted_total_restTime }}
                     @else{{ ''}}
                     @endif
                 </td>
                 <td class="list_item-content">
                     @if($attendance->workTime)
-                    {{ $attendance->workTime }}時間
+                    {{ $attendance->formatted_workTime }}
                     @else{{ ''}}
                     @endif
                 </td>

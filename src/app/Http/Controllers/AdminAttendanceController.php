@@ -37,10 +37,11 @@ class AdminAttendanceController extends Controller
         foreach ($restIns as $i => $restIn) {
             if (!empty($restIn) || !empty($restOuts[$i] ?? null)) {
                 $attendance->rests()->create([
+                    'workDate' => $attendance->workDate,
                     'restIn' => !empty($restIn) ? Carbon::parse($restIn) : null,
                     'restOut' => !empty($restOuts[$i]) ? Carbon::parse($restOuts[$i]) : null,
                     'restTime' => (!empty($restIn) && !empty($restOuts[$i]))
-                        ? Carbon::parse($restOuts[$i])->diffInMinutes(Carbon::parse($restIn)) / 60
+                        ? Carbon::parse($restIn)->diffInMinutes(Carbon::parse($restOuts[$i])) / 60
                         : 0,
                 ]);
             }
@@ -50,14 +51,12 @@ class AdminAttendanceController extends Controller
             ->with('success', '勤怠情報を更新しました。');
     }
 
-
     public function staffList()
     {
         $adminUser = Auth::guard('admin')->user()->id;
         $users = User::all();
         return view('adminStaff', compact('users'));
     }
-
 
     public function adminAttendanceStaff(Request $request, $id)
     {
@@ -120,7 +119,6 @@ class AdminAttendanceController extends Controller
             return view('adminAttendanceStaff', compact('month_day_lists', 'viewMonth', 'user'));
         }
     }
-
 
     public function staffLastMonth(Request $request, $id)
     {

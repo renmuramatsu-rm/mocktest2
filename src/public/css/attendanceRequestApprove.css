@@ -53,6 +53,7 @@ body {
 .button{
     width: 70%;
     margin: 0 auto;
+    margin-bottom: 40px;
 }
 
 .detail_button {

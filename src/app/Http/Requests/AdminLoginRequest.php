@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class AdminLoginRequest extends FormRequest
 {
@@ -25,6 +27,13 @@ class AdminLoginRequest extends FormRequest
             'email' => 'required|email',
             'password' => 'required|min:8'
         ];
+    }
+
+    public function authenticate(): void
+    {
+        if (!Auth::guard('admin')->attempt($this->only('email', 'password'))) {
+            throw ValidationException::withMessages(['email' => __('auth.failed')]);
+        }
     }
 
     public function messages()

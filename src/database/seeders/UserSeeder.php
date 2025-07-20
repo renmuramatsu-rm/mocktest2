@@ -49,5 +49,14 @@ class UserSeeder extends Seeder
         ];
         $User = new User;
         $User->fill($param)->save();
+
+        $param = [
+            'name' => 'test5',
+            'email' => 'test5@gmail',
+            'password' => 'password',
+            'email_verified_at' => Carbon::now(),
+        ];
+        $User = new User;
+        $User->fill($param)->save();
     }
 }

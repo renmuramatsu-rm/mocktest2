@@ -47,9 +47,9 @@
                 </th>
                 <td class="detail_body-clock_item">
                     @if($attendance->clockIn)
-                    <input type="datetime" name="clockIn" value="{{ $attendance->clockIn->format('H:i') }}">
+                    <input type="datetime" name="clockIn" value="{{ old('clockIn', $attendance->clockIn->format('H:i')) }}">
                     @else
-                    <input type="datetime" name="requested_clockIn" value="{{ '' }}">
+                    <input type="datetime" name="clockIn" value="{{ '' }}">
                     @endif
                 </td>
                 <td class="center-mark">
@@ -57,9 +57,9 @@
                 </td>
                 <td class="detail_body-clock_item">
                     @if($attendance->clockOut)
-                    <input type="datetime" name="clockOut" value="{{ $attendance->clockOut->format('H:i') }}">
+                    <input type="datetime" name="clockOut" value="{{ old('clockOut', $attendance->clockOut->format('H:i')) }}">
                     @else
-                    <input type="datetime" name="requested_clockOut" value="{{ '' }}">
+                    <input type="datetime" name="clockOut" value="{{ '' }}">
                     @endif
                 </td>
             </tr>
@@ -105,11 +105,27 @@
                 <th class=" detail_body-remark_title">
                     備考
                 </th>
-                <td class="detail_body-remark_item">
-                    <input type="textarea" name="remark" placeholder="">
+                <td class="detail_body-remark_item" colspan="3">
+                    <textarea name="remark"></textarea>
                 </td>
             </tr>
         </table>
+        @if(session('success'))
+        <div class="form__success">
+            {{ session('success') }}
+        </div>
+        @endif
+
+        @error('clockIn')
+        <div class="form__error">
+            {{ $message }}
+        </div>
+        @enderror
+        @error('remark')
+        <div class="form__error">
+            {{ $message }}
+        </div>
+        @enderror
         <div class="button">
             <button class="detail_button">
                 修正

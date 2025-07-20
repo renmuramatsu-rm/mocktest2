@@ -18,11 +18,11 @@ return new class extends Migration
             $table->date('workDate')->nullable();
             $table->time('clockIn')->nullable();
             $table->Time('clockOut')->nullable();
-            $table->integer('total_restTime')->nullable();
-            $table->integer('workTime')->nullable();
+            $table->decimal('total_restTime',5, 2)->nullable();
+            $table->decimal('workTime',5, 2)->nullable();
             $table->string('remark')->nullable();
             $table->timestamps();
-            // CHECK(clockOut > clockIn)
+            // CHECK(clockOut > clockIn);
         });
     }
 
