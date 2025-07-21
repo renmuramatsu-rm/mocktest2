@@ -70,5 +70,15 @@ class RestSeeder extends Seeder
         ];
         $Rest = new Rest;
         $Rest->fill($param)->save();
+
+        $param = [
+            'attendance_id' => '8',
+            'workDate'      => '2025-07-05',
+            'restIn'        => '2025-07-05 12:30:00',
+            'restOut'       => '2025-07-05 13:00:00',
+            'restTime'      => '0.5',
+        ];
+        $Rest = new Rest;
+        $Rest->fill($param)->save();
     }
 }

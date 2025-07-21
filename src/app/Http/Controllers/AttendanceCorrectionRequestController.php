@@ -38,9 +38,12 @@ class AttendanceCorrectionRequestController extends Controller
                 'attendance_id' => $attendance->id,
                 'user_id' => $user->id,
                 'workDate' => $request -> input('workDate'),
-                'requested_clockIn' => Carbon::parse($request->input('requested_clockIn')),
-                'requested_clockOut' => Carbon::parse($request->input('requested_clockOut')),
+                'requested_clockIn' => $request->input('requested_clockIn'),
+                'requested_clockOut' => $request->input('requested_clockOut'),
                 'remark' => $request->input('remark'),
+                'requested_workTime' => round(Carbon::parse($request->input('requested_clockIn'))->diffInSeconds(
+                    Carbon::parse($request->input('requested_clockOut'))) / 3600, 2
+                    ),
                 'status' => 'pending',
             ]);
             $request_restIns = $request->input('request_restIn', []);
@@ -48,8 +51,11 @@ class AttendanceCorrectionRequestController extends Controller
             foreach ($request_restIns as $i => $request_restIn) {
                 if ($request_restIn || ($request_restOuts[$i] ?? null)) {
                     $attendanceRequest->requestRests()->create([
-                        'request_restIn' => $request_restIn ? Carbon::parse($request_restIn) : null,
-                        'request_restOut' => $request_restOuts[$i] ? Carbon::parse($request_restOuts[$i]) : null,
+                        'request_restIn' => $request_restIn ? $request_restIn : null,
+                        'request_restOut' => $request_restOuts[$i] ? $request_restOuts[$i] : null,
+                        'request_restTime' => ($request_restIn && $request_restOuts[$i])
+                            ? round($request_restIn->diffInSeconds($request_restOuts[$i]) / 3600, 2)
+                            : 0,
                     ]);
                 }
             }
@@ -92,19 +98,21 @@ class AttendanceCorrectionRequestController extends Controller
             if (isset($attendanceRests[$i])) {
                 // 既存の休憩を更新
                 $attendanceRests[$i]->update([
-                    'restIn' => $requestedRest->request_restIn,
-                    'restOut' => $requestedRest->request_restOut,
-                    'restTime' => ($requestedRest->request_restIn && $requestedRest->request_restOut)
-                        ? Carbon::parse($requestedRest->request_restOut)->diffInMinutes(Carbon::parse($requestedRest->request_restIn)) / 60
+                    'workDate' => $requestedRest  -> workDate,
+                    'restIn'   => $requestedRest  -> request_restIn,
+                    'restOut'  => $requestedRest  -> request_restOut,
+                    'restTime' => ($requestedRest -> request_restIn && $requestedRest->request_restOut)
+                        ? $requestedRest->request_restIn->diffInMinutes($requestedRest->request_restOut) / 60
                         : 0
                 ]);
             } else {
                 // 足りない場合は追加
                 $attendance->rests()->create([
-                    'restIn' => $requestedRest->request_restIn,
-                    'restOut' => $requestedRest->request_restOut,
-                    'restTime' => ($requestedRest->request_restIn && $requestedRest->request_restOut)
-                        ? Carbon::parse($requestedRest->request_restOut)->diffInMinutes(Carbon::parse($requestedRest->request_restIn)) / 60
+                    'workDate' => $requestedRest->workDate,
+                    'restIn'   => $requestedRest  -> request_restIn,
+                    'restOut'  => $requestedRest  -> request_restOut,
+                    'restTime' => ($requestedRest -> request_restIn && $requestedRest->request_restOut)
+                        ? $requestedRest->request_restOut->diffInMinutes($requestedRest->request_restIn) / 60
                         : 0
                 ]);
             }
@@ -122,7 +130,7 @@ class AttendanceCorrectionRequestController extends Controller
 
         // 勤務時間再計算
         if ($attendance->clockIn && $attendance->clockOut) {
-            $workMinutes = Carbon::parse($attendance->clockOut)->diffInMinutes(Carbon::parse($attendance->clockIn));
+            $workMinutes = $attendance->clockIn->diffInMinutes($attendance->clockOut);
             $attendance->workTime = ($workMinutes - ($attendance->total_restTime * 60)) / 60; // 時間単位
         }
 

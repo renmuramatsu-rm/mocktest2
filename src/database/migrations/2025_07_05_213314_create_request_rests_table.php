@@ -17,6 +17,7 @@ return new class extends Migration
             $table->date('workDate')->nullable();
             $table->Time('request_restIn')->nullable();
             $table->Time('request_restOut')->nullable();
+            $table->decimal('request_restTime', 5, 2)->nullable();
             $table->timestamps();
         });
     }

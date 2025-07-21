@@ -32,8 +32,8 @@ class AdminAttendanceController extends Controller
         $attendance->rests()->delete();
 
         // 休憩の入力（複数）
-        $restIns = $request->input('restIn', []);
-        $restOuts = $request->input('restOut', []);
+        $restIns = Carbon::parse($request->input('restIn', []));
+        $restOuts = Carbon::parse($request->input('restOut', []));
         foreach ($restIns as $i => $restIn) {
             if (!empty($restIn) || !empty($restOuts[$i] ?? null)) {
                 $attendance->rests()->create([
@@ -46,7 +46,6 @@ class AdminAttendanceController extends Controller
                 ]);
             }
         }
-
         return redirect()->route('detail', ['id' => $attendance->id])
             ->with('success', '勤怠情報を更新しました。');
     }

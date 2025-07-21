@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('workDate')->nullable();
             $table->time('requested_clockIn')->nullable();
             $table->time('requested_clockOut')->nullable();
+            $table->decimal('requested_workTime', 5, 2)->nullable();
             $table->string('remark')->nullable();
             $table->enum('status', ['pending', 'approved'])->default('pending');
             $table->timestamps();

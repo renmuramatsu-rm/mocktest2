@@ -15,6 +15,7 @@ class AttendanceCorrectionRequest extends Model
         'workDate',
         'requested_clockIn',
         'requested_clockOut',
+        'requested_workTime',
         'remark',
         'status',
     ];
@@ -23,6 +24,7 @@ class AttendanceCorrectionRequest extends Model
         'workDate' => 'date',
         'requested_clockIn' => 'datetime',
         'requested_clockOut' => 'datetime',
+        'requested_workTime' => 'float',
     ];
 
     public function getStatusLabelAttribute()

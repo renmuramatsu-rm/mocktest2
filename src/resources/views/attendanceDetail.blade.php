@@ -200,6 +200,25 @@
             {{ $message }}
         </div>
         @enderror
+        @if ($errors->has('request_restIn.*') && $errors->has('request_restOut.*'))
+        @error('request_restIn.*')
+        <div class="form__error">
+            {{ $message }}
+        </div>
+        @enderror
+        @elseif($errors->has('request_restIn.*') && !$errors->has('request_restOut.*'))
+        @error('request_restIn.*')
+        <div class="form__error">
+            {{ $message }}
+        </div>
+        @enderror
+        @elseif(!$errors->has('request_restIn.*') && $errors->has('request_restOut.*'))
+        @error('request_restOut.*')
+        <div class="form__error">
+            {{ $message }}
+        </div>
+        @enderror
+        @endif
         @error('remark')
         <div class="form__error">
             {{ $message }}

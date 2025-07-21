@@ -24,8 +24,8 @@ class AdminAttendanceTest extends TestCase
     public function test_admin_attendance_list()
     {
         $adminUser = AdminUser::find(1);
-        $today = Carbon::today()->Format('Y年m月d日');
-        $response = $this->actingAs($adminUser, 'admin')->get('/admin/attendance/list');
+        $today     = Carbon::today()->Format('Y年m月d日');
+        $response  = $this->actingAs($adminUser, 'admin')->get('/admin/attendance/list');
         $response->assertStatus(200);
         $response->assertViewHas('attendances');
         $response->assertSee($today);
@@ -35,7 +35,7 @@ class AdminAttendanceTest extends TestCase
     public function test_admin_attendance_list_yesterday()
     {
         $adminUser = AdminUser::find(1);
-        $response = $this->actingAs($adminUser, 'admin')->get('/admin/attendance/list/yesterday');
+        $response  = $this->actingAs($adminUser, 'admin')->get('/admin/attendance/list/yesterday');
         $response->assertStatus(200);
         $response->assertViewHas('attendances');
     }
@@ -44,7 +44,7 @@ class AdminAttendanceTest extends TestCase
     public function test_admin_attendance_list_tomorrow()
     {
         $adminUser = AdminUser::find(1);
-        $response = $this->actingAs($adminUser, 'admin')->get('/admin/attendance/list/tomorrow');
+        $response  = $this->actingAs($adminUser, 'admin')->get('/admin/attendance/list/tomorrow');
         $response->assertStatus(200);
         $response->assertViewHas('attendances');
     }
@@ -52,9 +52,9 @@ class AdminAttendanceTest extends TestCase
     // 勤怠詳細情報取得・修正機能（管理者）
     public function test_admin_attendance_detail()
     {
-        $adminUser = AdminUser::find(1);
+        $adminUser  = AdminUser::find(1);
         $attendance = Attendance::with(['user', 'rests'])->find(8);
-        $response = $this->actingAs($adminUser, 'admin')->get('/attendance/8');
+        $response   = $this->actingAs($adminUser, 'admin')->get('/attendance/8');
         $response->assertStatus(200);
 
         // 勤務日
@@ -83,12 +83,12 @@ class AdminAttendanceTest extends TestCase
     // 勤怠詳細情報取得・修正機能（管理者）バリデーション確認
     public function test_admin_attendance_detail_validation_clockIn()
     {
-        $adminUser = AdminUser::find(1);
+        $adminUser  = AdminUser::find(1);
         $attendance = Attendance::with(['user', 'rests'])->find(8);
-        $response = $this->actingAs($adminUser, 'admin')->post('/admin/attendance/8', [
-            'clockIn' => "11:00",
+        $response   = $this->actingAs($adminUser, 'admin')->post('/admin/attendance/8', [
+            'clockIn'  => "11:00",
             'clockOut' => "10:00",
-            'remark' => "昼食のため",
+            'remark'   => "昼食のため",
         ]);
         $response->assertStatus(302);
         $response->assertSessionHasErrors('clockIn');
@@ -97,14 +97,50 @@ class AdminAttendanceTest extends TestCase
         $this->assertEquals('出勤時間もしくは退勤時間が不適切な値です', $errors->first('clockIn'));
     }
 
+    public function test_admin_attendance_detail_validation_restIn()
+    {
+        $adminUser  = AdminUser::find(1);
+        $attendance = Attendance::with(['user', 'rests'])->find(8);
+        $response   = $this->actingAs($adminUser, 'admin')->post('/admin/attendance/8', [
+            'clockIn'  => "11:00",
+            'clockOut' => "18:00",
+            'restIn'   => ["10:00"],
+            'restOut'  => ["12:00"],
+            'remark'   => "昼食のため",
+        ]);
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('restIn.*');
+
+        $errors = session('errors');
+        $this->assertEquals('休憩時間が勤務時間外です', $errors->first('restIn.*'));
+    }
+
+    public function test_admin_attendance_detail_validation_restOut()
+    {
+        $adminUser  = AdminUser::find(1);
+        $attendance = Attendance::with(['user', 'rests'])->find(8);
+        $response   = $this->actingAs($adminUser, 'admin')->post('/admin/attendance/8', [
+            'clockIn'  => "11:00",
+            'clockOut' => "18:00",
+            'restIn'   => ["17:00"],
+            'restOut'  => ["19:00"],
+            'remark'   => "昼食のため",
+        ]);
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('restOut.*');
+
+        $errors = session('errors');
+        $this->assertEquals('休憩時間が勤務時間外です', $errors->first('restOut.*'));
+    }
+
     public function test_admin_attendance_detail_validation_remark()
     {
-        $adminUser = AdminUser::find(1);
+        $adminUser  = AdminUser::find(1);
         $attendance = Attendance::with(['user', 'rests'])->find(8);
         $response = $this->actingAs($adminUser, 'admin')->post('/admin/attendance/8', [
-            'clockIn' => "09:00",
+            'clockIn'  => "09:00",
             'clockOut' => "19:00",
-            'remark' => "",
+            'remark'   => "",
         ]);
         $response->assertStatus(302);
         $response->assertSessionHasErrors('remark');
@@ -117,8 +153,8 @@ class AdminAttendanceTest extends TestCase
     public function test_admin_attendance_staff()
     {
         $adminUser = AdminUser::find(1);
-        $users = User::all();
-        $response = $this->actingAs($adminUser, 'admin')->get('/admin/staff/list');
+        $users     = User::all();
+        $response  = $this->actingAs($adminUser, 'admin')->get('/admin/staff/list');
         $response->assertStatus(200);
         foreach ($users as $user) {
             $response->assertSee($user->name);
@@ -130,7 +166,7 @@ class AdminAttendanceTest extends TestCase
     public function test_attendance_staff_attendance()
     {
         $adminUser = AdminUser::find(1);
-        $response = $this->actingAs($adminUser, 'admin')->get('/admin/attendance/staff/2');
+        $response  = $this->actingAs($adminUser, 'admin')->get('/admin/attendance/staff/2');
         $response->assertStatus(200);
         $response->assertViewHas('month_day_lists');
     }
@@ -139,7 +175,7 @@ class AdminAttendanceTest extends TestCase
     public function test_attendance_staff_attendance_lastMonth()
     {
         $adminUser = AdminUser::find(1);
-        $response = $this->actingAs($adminUser, 'admin')->get('/admin/attendance/staff/lastMonth/2');
+        $response  = $this->actingAs($adminUser, 'admin')->get('/admin/attendance/staff/lastMonth/2');
         $response->assertStatus(200);
         $response->assertViewHas('month_day_lists');
     }
@@ -148,7 +184,7 @@ class AdminAttendanceTest extends TestCase
     public function test_attendance_staff_attendance_nextMonth()
     {
         $adminUser = AdminUser::find(1);
-        $response = $this->actingAs($adminUser, 'admin')->get('/admin/attendance/staff/nextMonth/2');
+        $response  = $this->actingAs($adminUser, 'admin')->get('/admin/attendance/staff/nextMonth/2');
         $response->assertStatus(200);
         $response->assertViewHas('month_day_lists');
     }
@@ -157,7 +193,7 @@ class AdminAttendanceTest extends TestCase
     public function test_attendance_staff_attendance_detail()
     {
         $adminUser = AdminUser::find(1);
-        $response = $this->actingAs($adminUser, 'admin')->get('/attendance/8');
+        $response  = $this->actingAs($adminUser, 'admin')->get('/attendance/8');
         $response->assertStatus(200);
         $response->assertViewHas('attendance');
     }
@@ -166,7 +202,7 @@ class AdminAttendanceTest extends TestCase
     public function test_attendance_request_pending()
     {
         $adminUser = AdminUser::find(1);
-        $response = $this->actingAs($adminUser, 'admin')->get('/stamp_correction_request/list?status=pending');
+        $response  = $this->actingAs($adminUser, 'admin')->get('/stamp_correction_request/list?status=pending');
         $response->assertStatus(200);
         $response->assertViewHas('requests');
     }
@@ -175,7 +211,7 @@ class AdminAttendanceTest extends TestCase
     public function test_attendance_request_approved()
     {
         $adminUser = AdminUser::find(1);
-        $response = $this->actingAs($adminUser, 'admin')->get('/stamp_correction_request/list?status=approved');
+        $response  = $this->actingAs($adminUser, 'admin')->get('/stamp_correction_request/list?status=approved');
         $response->assertStatus(200);
         $response->assertViewHas('requests');
     }
@@ -184,7 +220,7 @@ class AdminAttendanceTest extends TestCase
     public function test_attendance_request_detail()
     {
         $adminUser = AdminUser::find(1);
-        $response = $this->actingAs($adminUser, 'admin')->get('/stamp_correction_request/approve/1');
+        $response  = $this->actingAs($adminUser, 'admin')->get('/stamp_correction_request/approve/1');
         $response->assertStatus(200);
         $response->assertViewHas('attendanceRequest');
     }
@@ -194,8 +230,11 @@ class AdminAttendanceTest extends TestCase
     public function test_attendance_request_detail_approve()
     {
         $adminUser = AdminUser::find(1);
-        $response = $this->actingAs($adminUser, 'admin')->post('/stamp_correction_request/approve/1');
+        $response  = $this->actingAs($adminUser, 'admin')->post('/stamp_correction_request/approve/1');
         $response->assertStatus(302);
+        $response = $this->followingRedirects()
+        ->actingAs($adminUser, 'admin')
+        ->get('/stamp_correction_request/approve/1');
         $response->assertSee('承認済み');
     }
 }

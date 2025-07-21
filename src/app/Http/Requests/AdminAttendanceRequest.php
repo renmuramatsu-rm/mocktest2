@@ -22,17 +22,23 @@ class AdminAttendanceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'clockIn' => ['required','date_format:H:i', 'before:clockOut'],
-            'clockOut' => ['required','date_format:H:i'],
-            'remark' => ['required'],
+            'clockIn'    => ['required','date_format:H:i', 'before:clockOut'],
+            'clockOut'   => ['required','date_format:H:i'],
+            'remark'     => ['required'],
+            'restIn.*'   => ['nullable','date_format:H:i', 'before:clockOut', 'after:clockIn'],
+            'restOut.*'  => ['nullable','date_format:H:i', 'before:clockOut', 'after:clockIn'],
         ];
     }
 
     public function messages()
     {
         return [
-            'clockIn.before' => '出勤時間もしくは退勤時間が不適切な値です',
-            'remark.required' => '備考を記入してください',
+            'clockIn.before'   => '出勤時間もしくは退勤時間が不適切な値です',
+            'remark.required'  => '備考を記入してください',
+            'restIn.*.before'  => '休憩時間が勤務時間外です',
+            'restIn.*.after'   => '休憩時間が勤務時間外です',
+            'restOut.*.before' => '休憩時間が勤務時間外です',
+            'restOut.*.after'  => '休憩時間が勤務時間外です',
         ];
     }
 }

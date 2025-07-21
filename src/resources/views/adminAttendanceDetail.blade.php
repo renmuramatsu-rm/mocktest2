@@ -115,7 +115,6 @@
             {{ session('success') }}
         </div>
         @endif
-
         @error('clockIn')
         <div class="form__error">
             {{ $message }}
@@ -126,6 +125,25 @@
             {{ $message }}
         </div>
         @enderror
+        @if ($errors->has('restIn.*') && $errors->has('restOut.*'))
+        @error('restIn.*')
+        <div class="form__error">
+            {{ $message }}
+        </div>
+        @enderror
+        @elseif($errors->has('restIn.*') && !$errors->has('restOut.*'))
+        @error('restIn.*')
+        <div class="form__error">
+            {{ $message }}
+        </div>
+        @enderror
+        @elseif(!$errors->has('restIn.*') && $errors->has('restOut.*'))
+        @error('restOut.*')
+        <div class="form__error">
+            {{ $message }}
+        </div>
+        @enderror
+        @endif
         <div class="button">
             <button class="detail_button">
                 修正

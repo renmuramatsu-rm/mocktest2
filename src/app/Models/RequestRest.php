@@ -11,6 +11,7 @@ class RequestRest extends Model
         'workDate',
         'request_restIn',
         'request_restOut',
+        'request_restTime'
     ];
 
     protected $casts = [
