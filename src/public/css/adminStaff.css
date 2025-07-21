@@ -46,17 +46,6 @@ body {
     padding: 10px;
 }
 
-@media screen and (min-width: 1400px) and (max-width: 1540px) {
-
-    .staff,
-    .staff_title,
-    .staff_body,
-    .staff_table {
-        width: 70%;
-    }
-}
-
-
 @media screen and (min-width: 768px) and (max-width: 850px) {
 
     .staff,
@@ -69,7 +58,6 @@ body {
 
     .staff_title {
         font-size: 24px;
-        text-align: center;
     }
 
     .staff_table th,

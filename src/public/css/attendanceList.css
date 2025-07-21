@@ -28,6 +28,7 @@ body {
     background-color: #fff;
     border-radius: 10px;
     overflow: hidden;
+    margin-bottom: 40px;
 }
 
 .list_title {
@@ -67,27 +68,6 @@ body {
     text-decoration: none;
 }
 
-.btn {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-
-@media screen and (min-width: 1400px) and (max-width: 1540px) {
-
-    .list,
-    .list_select,
-    .list_title,
-    .list_body,
-    .list_table {
-        width: 70%;
-    }
-}
-
-
 @media screen and (min-width: 768px) and (max-width: 850px) {
 
     .list,
@@ -99,15 +79,12 @@ body {
     }
 
     .list_select {
-        flex-direction: column;
-        align-items: center;
         width: 95%;
         padding: 10px 0;
     }
 
     .list_title {
         font-size: 24px;
-        text-align: center;
     }
 
     .list_table th,
