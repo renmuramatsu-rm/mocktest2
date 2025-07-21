@@ -85,7 +85,7 @@ class AttendanceController extends Controller
                 'employee_id' => $user->id,
                 'clockOut'    => Carbon::now()->toTimeString(),
                 'status'      => $request->input('status', '退勤済'),
-                'workTime'    => $attendance->clockIn->diffInHours($now) - $attendance->total_restTime,
+                'workTime'    => round(($attendance->clockIn->diffInMinutes($now) / 60) - $attendance->total_restTime, 2)
             ]);
             return view('index', compact('date', 'hour', 'attendance'));
         } elseif (!$attendance && !$attendance->clockOut) {
@@ -388,6 +388,7 @@ class AttendanceController extends Controller
             foreach ($request_restIns as $i => $request_restIn) {
                 if ($request_restIn || ($request_restOuts[$i] ?? null)) {
                     $attendanceRequest->requestRests()->create([
+                        'workDate'            => $request->input('workDate'),
                         'request_restIn'   => $request_restIn ? $request_restIn : null,
                         'request_restOut'  => $request_restOuts[$i] ? $request_restOuts[$i] : null,
                         'request_restTime' => ($request_restIn && $request_restOuts[$i])

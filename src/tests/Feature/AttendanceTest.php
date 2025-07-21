@@ -138,15 +138,22 @@ class AttendanceTest extends TestCase
         $afterResponse->assertSeeText('休憩戻');
     }
 
-    public function test_attendance_restTime()
+    public function test_attendance_restTime_one_hour()
     {
-        $user2 = User::find(2);
-        $response = $this->actingAs($user2)->get('/');
-        $restInResponse = $this->actingAs($user2)->post('/attendance/restIn');
-        $restOutResponse = $this->actingAs($user2)->post('/attendance/restOut');
-        $afterResponse = $this->actingAs($user2)->get('/attendance/list');
-        $afterResponse->assertStatus(200);
-        $afterResponse->assertSeeText('00:00');
+        $user = User::find(2);
+
+        Carbon::setTestNow(Carbon::createFromTime(9, 0, 0));
+        $this->actingAs($user)->post('/attendance/clockIn');
+        Carbon::setTestNow(Carbon::createFromTime(12, 0, 0));
+        $this->actingAs($user)->post('/attendance/restIn');
+        Carbon::setTestNow(Carbon::createFromTime(13, 0, 0));
+        $this->actingAs($user)->post('/attendance/restOut');
+        Carbon::setTestNow(Carbon::createFromTime(18, 0, 0));
+        $this->actingAs($user)->post('/attendance/clockOut');
+        $response = $this->actingAs($user)->get('/attendance/list');
+        $response->assertStatus(200);
+        $response->assertSeeText('01:00');
+        Carbon::setTestNow();
     }
 
     // 退勤機能

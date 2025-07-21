@@ -83,7 +83,7 @@
         </tbody>
     </table>
     <div class="csv">
-        <form action="{{ route('admin.export', $user->id) }}" method="post">
+        <form action="{{ route('admin.export', $user->id) }}" method="post" class="csv_form">
             @csrf
             <button class="detail_csv" type="submit">CSV出力</button>
             <input type="hidden" name="viewMonth" value="{{ $viewMonth ?? ""}}">

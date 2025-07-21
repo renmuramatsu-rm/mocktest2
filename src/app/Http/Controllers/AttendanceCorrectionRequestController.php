@@ -112,7 +112,7 @@ class AttendanceCorrectionRequestController extends Controller
                     'restIn'   => $requestedRest  -> request_restIn,
                     'restOut'  => $requestedRest  -> request_restOut,
                     'restTime' => ($requestedRest -> request_restIn && $requestedRest->request_restOut)
-                        ? $requestedRest->request_restOut->diffInMinutes($requestedRest->request_restIn) / 60
+                        ? $requestedRest->request_restIn->diffInMinutes($requestedRest->request_restOut) / 60
                         : 0
                 ]);
             }

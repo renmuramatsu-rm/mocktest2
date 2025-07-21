@@ -1,7 +1,22 @@
 body {
     background-color: whitesmoke;
 }
+
+.list_tab{
+    width: 70%;
+    display: flex;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+.list {
+    width: 100%;
+    padding: 30px 15px;
+    margin: 0 auto;
+}
+
 .request {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: left;
@@ -22,12 +37,6 @@ body {
     border: none;
     background: none;
     margin-right: 30px;
-}
-.list {
-    max-width: 1540px;
-    width: 100%;
-    padding: 30px 15px;
-    margin: 0 auto;
 }
 
 .list_table {
@@ -67,24 +76,10 @@ body {
     padding: 10px;
 }
 
-@media screen and (min-width: 1400px) and (max-width: 1540px) {
+@media (min-width: 768px) and (max-width: 850px) {
 
     .list,
-    .list_title,
-    .list_body,
-    .list_table {
-        width: 70%;
-    }
-
-    .request_list {
-        font-size: 16px;
-    }
-}
-
-
-@media screen and (min-width: 768px) and (max-width: 850px) {
-
-    .list,
+    .list_tab,
     .list_title,
     .list_body,
     .list_table {
@@ -94,13 +89,6 @@ body {
 
     .list_title {
         font-size: 24px;
-        text-align: center;
-    }
-
-    .request {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 10px 0;
     }
 
     .list__item {
@@ -108,13 +96,13 @@ body {
     }
 
     .request_list {
-        font-size: 14px;
+        font-size: 12px;
         margin-right: 10px;
     }
 
     .list_table th,
     .list_table td {
-        font-size: 14px;
+        font-size: 12px;
         padding: 8px;
     }
 

@@ -9,7 +9,7 @@
     <div class="list_title">
         申請一覧
     </div>
-    <div>
+    <div class="list_tab">
         <ul class="request">
             <li class="list__item">
                 <a href="?status=pending" class="request_list">承認待ち</a>
